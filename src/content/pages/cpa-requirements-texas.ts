@@ -30,7 +30,7 @@ export default definePage({
     const t1 = h.E.cpaTotal({ state: 'TX', retakes: 1, prep: 0 });
     const rows = [['Education', '150 semester hours', '120 semester hours'], ['Full-time experience', `${T.now.expMonths} calendar months`, `${T.next.expMonths} calendar months`], ['Part-time experience', `${h.num(T.now.partTimeHours)} hours within ${T.now.partTimeYears} years`, `${h.num(T.next.partTimeHours)} hours within ${T.next.partTimeYears} years`], ['In effect', 'already in force', `since ${h.date(T.next.from)}`]];
     return `
-<h2>The two pathways</h2>
+<h2>The two pathways to a Texas CPA license</h2>
 ${h.table(['', 'Pathway A', 'Pathway B'], rows, `${h.src('tx_cert', 'TSBPA, CPA certification')}, read on ${h.read}.`, ['l', 'l', 'l'])}
 <p>Pathway B is not a shortcut: the year saved in school is spent at work before the certificate. For a graduate who would take a paid job anyway, it moves the cost from tuition to time.</p>
 ${h.box('Financial aid', '<p>The Texas board runs an Examination Fee Financial Aid program that reimburses the exam section fees (paid to NASBA) to eligible candidates. Its conditions are on the board’s site.</p>', 'tip')}

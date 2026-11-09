@@ -36,7 +36,7 @@ export default definePage({
     const states = h.E.STATES.map((s) => { const r = h.E.cpaTotal({ state: s, retakes: 0, prep: 0 }); return [h.E.stateName(s), h.m(r.exams), r.boardKnown > 0 ? h.m(r.boardKnown) : 'none confirmed', h.m2(h.E.cpaRetakePrice(s)), r.unread.length ? r.unread.join('; ') : 'none']; });
     const first = h.E.cpaTotal({ state: null, retakes: 0, prep: 0 });
     return `
-<h2>Section by section</h2>
+<h2>The CPA exam cost, section by section</h2>
 <p>Each section is a ${h.P.cpa.sectionHours}-hour exam and costs the same. A sitting is one attempt at a section: you pay for three Core sections and one Discipline section, and again for any section you retake.</p>
 ${h.table(['Section', 'Part', 'Length', 'Fee for each try'], rows, `Section fee ${h.m2(h.P.cpa.sectionFee)}, the same in every state and paid to NASBA (the National Association of State Boards of Accountancy). NASBA’s site refused our requests, so the amount was read where the ${h.src('va_boa', 'Virginia Board of Accountancy')} lists it, on its fee page, on ${h.read}.`, ['l', 'l', 'r', 'r'])}
 <p>Four tries, one per section, come to ${h.m(first.exams)}. Pass rates for each section are published by the AICPA on its ${h.src('aicpa_rates', 'scoring and pass rates page')}. If you expect to need a second try at one or two sections, type that number in the calculator: one retake brings the exam fees to ${h.m(h.E.cpaTotal({ state: null, retakes: 1, prep: 0 }).exams)}, two to ${h.m(h.E.cpaTotal({ state: null, retakes: 2, prep: 0 }).exams)}.</p>

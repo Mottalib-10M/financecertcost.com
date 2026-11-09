@@ -43,7 +43,7 @@ ${h.table(['Session', 'Candidates who sat', 'Passed', 'Pass rate'], sess, `${h.s
 ${h.table(['Pass rate', 'Expected sittings', 'Passed within two', 'Expected fees, early', 'Expected fees, standard'], sim, 'Computed from the Level I fees of CFA Institute.', ['r', 'r', 'r', 'r', 'r'])}
 <p>The assumption is plain on purpose. Your own chance is not the pooled rate: candidates who complete a full study plan pass more often than those who sit underprepared, and repeat candidates are mixed into the same figure. Treat the result as the bill of a typical candidate, then move the rate up or down to see how much it matters.</p>
 
-<h2>The format, in brief</h2>
+<h2>The Level I exam format, in brief</h2>
 <p>CFA Institute describes Level I on its ${h.src('cfa_exam', 'exam page')} as a computer-based multiple-choice exam of ${h.num1(h.P.cfa.examHours)} hours taken at a test center. The curriculum, the topic weights and the candidate body of knowledge are published by CFA Institute for each exam year; this site does not summarize them, because they change and the official outline is the only one that binds the exam. Results are released ${h.P.cfa.resultsWeeks.min} to ${h.P.cfa.resultsWeeks.max} weeks after the testing window closes.</p>
 
 <h2>Early or standard: the cheapest decision you control</h2>

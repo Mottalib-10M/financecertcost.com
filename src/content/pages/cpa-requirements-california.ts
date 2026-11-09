@@ -14,7 +14,7 @@ export default definePage({
   title: 'California CPA Requirements: AB 1175 Rules From 2027',
   description: 'California CPA requirements before and after AB 1175 takes effect on January 1, 2027: degree, units, experience, the CBA exam application fees and what changes.',
   h1: 'California CPA requirements: the rules change on January 1, 2027',
-  intro: 'Until December 31, 2026, California asks for 150 semester units and one year of experience; from January 1, 2027, a bachelor’s degree with an accounting concentration and two years. Type your units and experience and pick the date you will apply.',
+  intro: 'California CPA requirements change with the new year: until December 31, 2026, the state asks for 150 semester units and one year of experience; from January 1, 2027, a bachelor’s degree with an accounting concentration and two years. Type your units and experience and pick the date you will apply.',
   resume: (h) => {
     const C = h.P.cpa.states.CA;
     return `California licenses more CPAs than any other state, and its rules are about to change. Until December 31, 2026, the California Board of Accountancy requires 150 semester units of education and one year of experience for the license. On ${h.date(C.next.from)}, the provisions of Assembly Bill 1175 take effect: in the board’s words, the new rules “focus on the degree earned and remove the 150 total-unit requirement,” and a second year of accounting experience is required. To sit for the exam, the board asks for ${C.sitUnits}. The CBA charges ${h.m(C.examFirst!)} for a first exam application and ${h.m(C.examRepeat!)} for each repeat application, on top of the section fees paid to NASBA, ${h.m2(h.P.cpa.sectionFee)} each. The California license fee was not confirmed on the board’s pages we read, so this site does not show it.`;
@@ -30,7 +30,7 @@ export default definePage({
     const t1 = h.E.cpaTotal({ state: 'CA', retakes: 1, prep: 0 });
     const rows = [['Education for the license', '150 semester units', C.next.rule], ['Experience', `${C.now.expYears} year`, `${C.next.expYears} years`], ['In force', `until ${h.date('2026-12-31')}`, `from ${h.date(C.next.from)}`]];
     return `
-<h2>The rules before and after AB 1175</h2>
+<h2>California CPA requirements before and after AB 1175</h2>
 ${h.table(['', 'Current rules', 'AB 1175 rules'], rows, `${h.src('ca_ab1175', 'California Board of Accountancy, news release of March 23, 2026')}, read on ${h.read}.`, ['l', 'l', 'l'])}
 <p>The change is the one most states are making: fewer required units, more required experience. For a student finishing a four-year degree in 2026 or later, it removes the need for a fifth year of school; for someone already at 150 units, it adds a year of work before the license unless the file is complete under the current rules.</p>
 

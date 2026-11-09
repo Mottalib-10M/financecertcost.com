@@ -29,7 +29,7 @@ export default definePage({
     const rows = h.E.cfpSessions.map((s) => [h.ml(s.w), h.num(s.all[0]), h.pc(h.E.cfpRate(s, 'all')), h.pc(h.E.cfpRate(s, 'first')), h.pc(h.E.cfpRate(s, 'repeat')), h.num1(h.E.expectedSittings2(h.E.cfpRate(s, 'first'), h.E.cfpRate(s, 'repeat')))]);
     const s = h.E.cfpLatest(); const p1 = h.E.cfpRate(s, 'first'), pr = h.E.cfpRate(s, 'repeat');
     return `
-<h2>Every window since March 2023</h2>
+<h2>The exam pass rate in every window since March 2023</h2>
 ${h.table(['Window', 'Sat', 'Overall', 'First-time', 'Repeat', 'Expected sittings'], rows, `${h.src('cfp_stats', 'CFP Board, historical CFP® exam statistics through July 2026')} (PDF), read on ${h.read}.`, ['l', 'r', 'r', 'r', 'r', 'r'])}
 <p>Overall pass rates sit in the low to high sixties throughout; the repeat rate moves more, because fewer people are in that group. The share of repeat candidates in a window shifts the overall rate even when neither group changes.</p>
 

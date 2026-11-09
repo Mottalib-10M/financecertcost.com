@@ -31,7 +31,7 @@ export default definePage({
     const grid = [2, 5, 8, 11].map((mo) => [h.mn(mo), o.l1.includes(mo) ? 'Level I' : 'not held', o.l2.includes(mo) ? 'Level II' : 'not held', o.l3.includes(mo) ? 'Level III' : 'not held']);
     const paths = o.l1.map((mo) => { const p = h.E.cfaFastestPath(mo, 2027, 3); const r = h.E.cfaNextRetake(mo, 'l1'); return [`${h.mn(mo)} 2027`, `${h.mn(p[1].month)} ${p[1].year}`, `${h.mn(p[2].month)} ${p[2].year}`, `${h.mn(r.month)} ${2027 + r.yearsAhead}`]; });
     return `
-<h2>The calendar of windows</h2>
+<h2>The calendar of exam dates, window by window</h2>
 ${h.table(['Month', 'Level I', 'Level II', 'Level III'], grid, `Windows held in 2024 to 2026, from the ${h.src('cfa_results', 'CFA Institute results file')}.`, ['l', 'l', 'l', 'l'])}
 <p>This grid is drawn from the sessions that actually took place, not from an announcement of future dates. CFA Institute can change the windows for a future year; the registration page for your exam is the reference once you book.</p>
 

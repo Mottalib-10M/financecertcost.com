@@ -15,7 +15,7 @@ export default definePage({
   title: 'CFA® Pass Rates by Level: Every Session Since 2024',
   description: 'CFA® pass rates for Levels I, II and III, session by session since February 2024, with ten-year and all-time averages from CFA Institute and the sittings due.',
   h1: 'CFA® pass rates by level and by session',
-  intro: `Over the ten years 2017 to 2026, ${pct(E.cfaRate('l1', 'tenYear'))} of Level I candidates passed, ${pct(E.cfaRate('l2', 'tenYear'))} at Level II and ${pct(E.cfaRate('l3', 'tenYear'))} at Level III. The tool turns a rate into the number of sittings, or attempts, and fees to expect.`,
+  intro: `CFA® pass rates over the ten years 2017 to 2026: ${pct(E.cfaRate('l1', 'tenYear'))} of Level I candidates passed, ${pct(E.cfaRate('l2', 'tenYear'))} at Level II and ${pct(E.cfaRate('l3', 'tenYear'))} at Level III. The tool turns a rate into the number of sittings, or attempts, and fees to expect.`,
   resume: (h) => {
     const L = h.E.CFA_LEVELS;
     const last = L.map((l) => `${h.E.LEVEL_NAME[l]} ${h.pc(h.E.cfaRate(l, h.E.cfaLatest(l).w))} (${h.ml(h.E.cfaLatest(l).w)})`).join(', ');
@@ -30,7 +30,7 @@ export default definePage({
     const rows = h.E.cfaSessions.map((s) => [h.ml(s.w), ...h.E.CFA_LEVELS.map((l) => (s[l] ? h.pc(s[l]![1] / s[l]![0]) : 'not held'))]);
     const avg = h.E.CFA_LEVELS.map((l) => [h.E.LEVEL_NAME[l], h.pc(h.E.cfaRecentRate(l)), h.pc(h.E.cfaRate(l, 'tenYear')), h.pc(h.E.cfaRate(l, 'sinceStart')), h.num(h.P.cfa.tenYear[l][0])]);
     return `
-<h2>Session by session</h2>
+<h2>Pass rates by level, session by session</h2>
 ${h.table(['Session', 'Level I', 'Level II', 'Level III'], rows, `${h.src('cfa_results', 'CFA Institute, exam results 1963-2026')} (PDF), read on ${h.read}. “Not held”: level not offered in that window.`, ['l', 'r', 'r', 'r'])}
 <p>Level III appears only in February and August, Level II not in February. Each figure is candidates who passed divided by candidates who sat in that window; CFA Institute counts each sitting, so a candidate who sat twice appears twice.</p>
 

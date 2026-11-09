@@ -32,7 +32,7 @@ export default definePage({
     const rows = W.map((w) => [w.test, h.date(w.opens), h.date(w.eduDeadline), w.earlyClose ? h.date(w.earlyClose) : 'not posted', w.lateClose ? h.date(w.lateClose) : 'not posted']);
     const past = h.E.cfpSessions.slice(-6).map((s) => [h.ml(s.w), h.num(s.all[0]), h.pc(h.E.cfpRate(s, 'all'))]);
     return `
-<h2>The three windows</h2>
+<h2>The three exam windows and their dates</h2>
 ${h.table(['Testing window', 'Registration opens', 'Education verified by', 'Early registration (early bird) closes', 'Registration closes'], rows, `${h.src('cfp_registration', 'CFP Board, upcoming exam dates and registration')}, read on ${h.read}.`, ['l', 'l', 'l', 'l', 'l'])}
 <p>For October 2026, the standard deadline was ${h.date(W[0].standardClose!)}, the same day as the education deadline, and late registration ran a week longer. If the 2027 windows follow the same pattern, the last cheap day to register falls well before the education deadline; but that is a pattern, not a published date, and the tool does not fill it in.</p>
 

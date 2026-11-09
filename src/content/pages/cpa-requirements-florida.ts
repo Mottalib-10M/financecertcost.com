@@ -28,7 +28,7 @@ export default definePage({
     const t = h.E.cpaTotal({ state: 'FL', retakes: 0, prep: 0 });
     const t1 = h.E.cpaTotal({ state: 'FL', retakes: 1, prep: 0 });
     return `
-<h2>What the statute requires</h2>
+<h2>The CPA requirements in Florida’s statute</h2>
 <ul>
 <li><strong>To sit for the exam</strong> (${h.src('fl_306', 'section 473.306')}): ${h.P.cpa.states.FL.sitHours} semester hours or 180 quarter hours from an accredited college or university, with the accounting and business concentration set by board rule, and good moral character.</li>
 <li><strong>For the license</strong> (${h.src('fl_308', 'section 473.308')}): passing the exam, at least 150 semester hours including a bachelor’s or higher degree with a concentration in accounting and business, one year of verified work experience, and good moral character.</li>

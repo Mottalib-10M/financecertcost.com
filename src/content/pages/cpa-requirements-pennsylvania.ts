@@ -30,7 +30,7 @@ export default definePage({
     const t1 = h.E.cpaTotal({ state: 'PA', retakes: 1, prep: 0 });
     const rows = [['150 credits or more', `${h.num(PA.now.expHours)} hours`, `at least ${PA.now.expMonths} months`], ['Bachelor’s degree, under 150 credits', `${h.num(PA.next.expHours)} hours`, `at least ${PA.next.expMonths} months`]];
     return `
-<h2>The two routes to the license</h2>
+<h2>The two routes to a Pennsylvania CPA license</h2>
 ${h.table(['Education', 'Experience', 'Over'], rows, `${h.src('pa_snapshot', 'Pennsylvania State Board of Accountancy, CPA licensure snapshot')}, read on ${h.read}.`, ['l', 'r', 'r'])}
 <p>The tool converts years into hours at the rate the board uses for its route: one year for the 150-credit route, two for the other. If your work is part-time, count your actual hours against the table rather than relying on years.</p>
 

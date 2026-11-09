@@ -13,9 +13,9 @@ const l1 = E.cfaRate('l1', 'tenYear');
 const s = E.cfpLatest(); const p1 = E.cfpRate(s, 'first'), pr = E.cfpRate(s, 'repeat');
 ---
 <PageLayout title="Finance Cert Cost Method: Fees, Pass Rates, Retakes, Limits" description="How Finance Cert Cost turns official fees and published pass rates into expected totals for the CPA, CFA®, CFP®, EA, CIA and FRM®, and what it leaves out." lang={lang} jsonLd={[articleSchema({ title: 'How the totals are built', description: 'Method of Finance Cert Cost', path: route('method', lang), lang }), breadcrumbSchema([{ name: 'Home', path: route('home', lang) }, { name: 'Method', path: route('method', lang) }])]} breadcrumbs={[{ label: 'Method' }]}>
-  <header class="mb-6"><p class="kicker">Method</p><h1 class="mt-1 text-3xl font-bold text-navy-900 md:text-4xl">How the totals are built</h1></header>
+  <header class="mb-6"><p class="kicker">Method</p><h1 class="mt-1 text-3xl font-bold text-navy-900 md:text-4xl">Finance Cert Cost method: how the totals are built</h1></header>
   <div class="prose prose-slate max-w-none">
-    <p>Every calculator calls one engine of pure functions, fed by one parameter file of fees, rules and pass rates. No amount is typed into a page. Each value was read by hand on the official page named in the file, on {displayDate(P.retrieved_at, 'en-US')}. Updates are made by hand when a body publishes new figures; nothing is fetched automatically and no update schedule is promised.</p>
+    <p>Every calculator on Finance Cert Cost calls one engine of pure functions, fed by one parameter file of fees, rules and pass rates. No amount is typed into a page. Each value was read by hand on the official page named in the file, on {displayDate(P.retrieved_at, 'en-US')}. Updates are made by hand when a body publishes new figures; nothing is fetched automatically and no update schedule is promised.</p>
 
     <h2>Expected sittings</h2>
     <p>If a candidate passes an exam with probability p at each attempt, independently, the number of attempts until a pass follows a geometric distribution with mean 1 ÷ p, and the chance of having passed within n attempts is 1 − (1 − p)<sup>n</sup>. Example: CFA® Level I, ten-year pass rate {pc(l1)} (<Fragment set:html={L('cfa_results')} />), gives {h.num1(1 / l1)} sittings on average.</p>
@@ -40,7 +40,7 @@ const s = E.cfpLatest(); const p1 = E.cfpRate(s, 'first'), pr = E.cfpRate(s, 're
     <h2>Tests</h2>
     <p>Run on every build: expected sittings for p = ½ and for the CFP® two-rate formula recomputed by hand; the CFA® first-try total equal to the {m(P.cfa.programTotal.low)} to {m(P.cfa.programTotal.high)} range stated by CFA Institute; the four-section CPA price and one retake at the section fee plus the Texas board fee; the CPA routes of New York and California before and after their dates; the EA, CIA and FRM® totals. A failing test stops the build.</p>
 
-    <h2>What is left out</h2>
+    <h2>What Finance Cert Cost leaves out</h2>
     <ul>
       <li>review course, book and practice exam prices, which the reader types;</li>
       <li>CFA Institute and society dues (typed), the CFP® education program (typed);</li>

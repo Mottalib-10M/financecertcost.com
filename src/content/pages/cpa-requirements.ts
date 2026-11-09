@@ -33,7 +33,7 @@ export default definePage({
       ['Pennsylvania', `${S.PA.sitCredits} credits, ${S.PA.sitAccounting} in accounting`, `150 credits and ${h.num(S.PA.now.expHours)} hours over ${S.PA.now.expMonths} months; or fewer than 150 and ${h.num(S.PA.next.expHours)} hours over ${S.PA.next.expMonths} months`, h.a('cpa-requirements-pennsylvania', 'Pennsylvania rules')],
     ];
     return `
-<h2>Five states side by side</h2>
+<h2>CPA requirements in five states, side by side</h2>
 ${h.table(['State', 'To sit for the exam', 'For the license', 'Detail'], rows, `State boards and statutes, read on ${h.read}.`, ['l', 'l', 'l', 'l'])}
 <p>Each row summarizes the board’s own page or the statute, linked from the state’s page on this site. Hours are semester hours (credits); each state also sets how many must be in accounting and in business subjects, and what experience counts.</p>
 

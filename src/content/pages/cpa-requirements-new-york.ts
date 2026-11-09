@@ -14,7 +14,7 @@ export default definePage({
   title: 'New York CPA Requirements: 120-Hour Pathway From Nov 2026',
   description: 'New York CPA requirements: the 120-hour pathway with two years of experience from November 21, 2026, the 150-hour deadlines of 2027 and the $427 license fee.',
   h1: 'New York CPA requirements: the 120-hour pathway and the 2027 deadlines',
-  intro: 'From November 21, 2026, New York accepts 120 college semester hours, usually a bachelor’s degree, with two years of experience, alongside the 150-hour route with one year. Type your hours and experience and pick when you will apply.',
+  intro: 'New York CPA requirements gain a second route on November 21, 2026: from that date, the state accepts 120 college semester hours, usually a bachelor’s degree, with two years of experience, alongside the 150-hour route with one year. Type your hours and experience and pick when you will apply.',
   resume: (h) => {
     const N = h.P.cpa.states.NY;
     return `New York’s Office of the Professions, part of the State Education Department (NYSED), licenses CPAs under Article 149 of the Education Law. Every applicant must be of good moral character, at least ${N.age} years old, and meet the education, examination and experience requirements. From ${h.date(N.next.from)}, a new 120-semester-hour pathway opens, paired with two years of full-time experience or the part-time equivalent. The 150-semester-hour pathway with one year of experience remains, but its current version is phased out on August 1, 2027: applicants must complete the whole licensing process before that date, and NYSED asks for all materials by ${h.date(N.now.fileBy)}. After August 1, 2027, the 150-hour route follows the course content of the “150E” pathway. The fee for licensure and the first registration is ${h.m(N.license)}, paid with Form 1. The exam application fee was not read and is not shown.`;
@@ -40,7 +40,7 @@ ${h.table(['Application completed', 'Routes open'], rows, `${h.src('ny_150', 'NY
 <h2>Experience: one year or two</h2>
 <p>Experience is verified by a supervisor on Form 4B. On the 150-hour pathway, one year of full-time experience or its part-time equivalent is required; on the 120-hour pathway, two. The supervisor and the kind of work that qualify are set out in NYSED’s instructions for Form 4B.</p>
 
-<h2>What it costs</h2>
+<h2>What a New York CPA license costs</h2>
 <p>New York adds ${h.m(N.license)} for the license and first registration. With the four sections passed the first time, ${h.m(t.exams)} in section fees, the total read for New York is ${h.m(t.total)} before any review course; each section retaken adds the ${h.m2(h.P.cpa.sectionFee)} section fee again, so one retake brings it to ${h.m(t1.total)}. The Step 2 calculator above adds the number of retakes you type. The exam application fee charged on the way in was not on the pages we read, and is left out.</p>
 ${h.box('Plan backward from the deadline', `<p>If you are on the 150-hour route and want to stay on the current content rules, the practical deadline is ${h.date(N.now.fileBy)}, the date by which NYSED asks for all materials.</p>`, 'warning')}
 <p>For the four other states, see the ${h.a('cpa-requirements', 'comparison of licensure routes')}; ${h.a('cpa-requirements-pennsylvania', 'Pennsylvania')} has offered a lower-credit route for longer.</p>

@@ -34,7 +34,7 @@ export default definePage({
 <h2>Where the ${h.m(E.perPart)} goes</h2>
 <p>The SEE fee has two parts. The IRS user fee, ${h.m(E.irsUserFee)} per part since ${h.date(E.userFeeFrom)} (${h.src('fr_see', 'Federal Register, document 2026-07681')}), pays for the IRS’s side of the program. The rest, ${h.m(E.perPart - E.irsUserFee)}, is the vendor’s charge for running the exam. The vendor changed to ${E.vendor} on ${h.date(E.vendorFrom)}; the total per part listed in the ${h.src('irs_faq', 'IRS FAQ')} is ${h.m(E.perPart)}.</p>
 
-<h2>Totals by number of attempts</h2>
+<h2>Enrolled agent exam cost by number of attempts</h2>
 ${h.table(['Exam parts sat (SEE)', 'Exam fees', 'Total with enrollment and one year of tax preparer ID (PTIN)'], rows, `IRS, enrolled agents FAQ and PTIN requirements, read on ${h.read}. The IRS share is part of the exam fees, not added to them.`, ['l', 'r', 'r'])}
 <p>Three attempts is the minimum: one per part. The first row is the calculator’s starting figure. Every extra row is a retake. Because the IRS does not publish SEE pass rates that we could read, the calculator does not assume any; add the retakes you want to budget for.</p>
 
