@@ -38,7 +38,7 @@ export default definePage({
 <p>Each Discipline costs the same ${h.m2(h.P.cpa.sectionFee)} a try and lasts ${h.P.cpa.sectionHours} hours, like the Core sections. Passing the Core and any one of the three leads to the same license.</p>
 
 <h2>What the pass rates can and cannot tell you</h2>
-<p>Pass rates are published by the AICPA on its ${h.src('aicpa_rates', 'scoring and pass rates page')}, one cumulative figure per section. This site does not copy them, since the AICPA’s terms limit their use to personal purposes; the ${h.a('cpa-exam-pass-rates', 'pass rates page')} explains how to turn the rate you read there into tries and fees. A pass rate measures the group that sits the section as much as the section itself: each Discipline is chosen mostly by people from its own field, and the AICPA does not publish rates by candidate background. A rate cannot tell you whether you would do better in one Discipline than in another.</p>
+<p>Pass rates are published by the AICPA on its ${h.src('aicpa_rates', 'scoring and pass rates page')}, one cumulative figure per section; the ${h.a('cpa-exam-pass-rates', 'pass rates page')} links to it and explains how to turn the rate you read there into tries and fees. A pass rate measures the group that sits the section as much as the section itself: each Discipline is chosen mostly by people from its own field, and the AICPA does not publish rates by candidate background. A rate cannot tell you whether you would do better in one Discipline than in another.</p>
 ${h.box('Practical rule', '<p>Pick the Discipline that matches your job. The fee is the same whichever you pick; failing a section in a field you do not work in costs another fee and months of study.</p>', 'tip')}
 
 <h2>Exam time and scheduling</h2>

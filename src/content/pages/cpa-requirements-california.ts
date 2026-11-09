@@ -4,8 +4,8 @@ export default definePage({
   id: 'cpa-requirements-california',
   group: 'cpa',
   order: 50,
-  tool: { kind: 'mini:cpa-eligibility', props: { title: 'Step 1: which licensure route fits you in California', state: 0, when: 2 } },
-  mini: { kind: 'mini:cpa-total', props: { title: 'Step 2: what the exam and California board fees cost', state: 0 } },
+  tool: { kind: 'mini:cpa-eligibility', props: { title: 'Step 1: which licensure route fits you in California', state: 0, lock: 'state', when: 2 } },
+  mini: { kind: 'mini:cpa-total', props: { title: 'Step 2: what the exam and California board fees cost', state: 0, lock: 'state' } },
   related: ['cpa-requirements', 'cpa-exam-cost', 'cpa-requirements-new-york'],
   sources: ['ca_cbt', 'ca_ab1175', 'va_boa'],
   slug: 'california-cpa-requirements',
@@ -42,7 +42,7 @@ ${h.table(['', 'Current rules', 'AB 1175 rules'], rows, `${h.src('ca_ab1175', 'C
 ${h.box('Not shown: the license fee', '<p>The CBA charges fees for the license itself. We could not confirm their current amount on the pages we read, so they are left out of the total rather than guessed. Check the CBA’s fee schedule before you budget.</p>', 'warning')}
 
 <h2>Experience: what counts</h2>
-<p>The board sets which work qualifies and who may verify it. Under the current rules one year is required; under AB 1175, two. If you plan your career around the license, count backward from the date you want to hold it: the tool converts your years of experience against the rule in force on the date you apply. The ${h.a('cpa-requirements', 'five-state comparison')} shows how California’s new rule compares with ${h.a('cpa-requirements-new-york', 'New York')} and ${h.a('cpa-requirements-texas', 'Texas')}, which made the same move in 2026.</p>
+<p>The board sets which work qualifies and who may verify it. Under the current rules one year is required; under the rules that start on January 1, 2027, two. If you plan your career around the license, count backward from the date you want to hold it: the tool converts your years of experience against the rule in force on the date you apply. The ${h.a('cpa-requirements', 'five-state comparison')} shows how California’s new rule compares with ${h.a('cpa-requirements-new-york', 'New York')} and ${h.a('cpa-requirements-texas', 'Texas')}, which made the same move in 2026.</p>
 <p>A last point on timing: the date that counts is the one the board applies to your file, so ask the CBA how it treats an application in progress on January 1, 2027.</p>
 `;
   },

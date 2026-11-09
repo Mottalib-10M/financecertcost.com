@@ -4,8 +4,8 @@ export default definePage({
   id: 'cpa-requirements-florida',
   group: 'cpa',
   order: 51,
-  tool: { kind: 'mini:cpa-eligibility', props: { title: 'Step 1: which licensure route fits you in Florida', state: 1, hours: 120, years: 2 } },
-  mini: { kind: 'mini:cpa-total', props: { title: 'Step 2: what the exam and Florida board fees cost', state: 1 } },
+  tool: { kind: 'mini:cpa-eligibility', props: { title: 'Step 1: which licensure route fits you in Florida', state: 1, lock: 'state', hours: 120, years: 2 } },
+  mini: { kind: 'mini:cpa-total', props: { title: 'Step 2: what the exam and Florida board fees cost', state: 1, lock: 'state' } },
   related: ['cpa-requirements', 'cpa-exam-cost', 'cpa-requirements-texas'],
   sources: ['fl_306', 'fl_308', 'fl_sb364', 'va_boa'],
   slug: 'florida-cpa-requirements',
@@ -17,10 +17,10 @@ export default definePage({
   intro: 'Florida still requires 150 semester hours and one year of experience for the CPA license; 120 hours are enough to sit for the exam. Type your hours and years to see where you stand.',
   resume: (h) => {
     const F = h.P.cpa.states.FL;
-    return `Florida sets its CPA requirements in statute, in chapter 473 of the Florida Statutes. Under section 473.306, a candidate may take the licensure examination after completing ${F.sitHours} semester hours, or 180 quarter hours, from an accredited college or university, with a concentration in accounting and business courses specified by the Board of Accountancy, and on showing good moral character. Under section 473.308, the license itself requires at least 150 semester hours, including a bachelor’s or higher degree, and one year of work experience verified by a licensed CPA. A 2026 bill, SB 364, would have revised the education and experience requirements; it died in messages on ${h.date(F.billDied)}, so the 150-hour rule stands. The Florida board’s own site refused our requests, so its application and license fees are not shown here: the calculator marks them “not read”.`;
+    return `Florida sets its CPA requirements in its state law, not only in board rules. A candidate may take the licensure examination after completing ${F.sitHours} semester hours, or 180 quarter hours, from an accredited college or university, with a concentration in accounting and business courses specified by the Board of Accountancy, and on showing good moral character. The license itself requires at least 150 semester hours, including a bachelor’s or higher degree, and one year of work experience verified by a licensed CPA. A 2026 bill would have revised the education and experience requirements; it died in the legislature on ${h.date(F.billDied)}, so the 150-hour rule stands. The Florida board’s own site refused our requests, so its application and license fees are not shown here: the calculator marks them “not read”.`;
   },
   faqs: (h) => [
-    { q: 'Can I take the CPA exam in Florida with 120 hours?', a: `Yes. Section 473.306 of the Florida Statutes lets a candidate sit for the exam with ${h.P.cpa.states.FL.sitHours} semester hours or 180 quarter hours, with the accounting and business concentration the board sets by rule. The license still requires 150 hours, so the remaining 30 can be completed while you take the exam.` },
+    { q: 'Can I take the CPA exam in Florida with 120 hours?', a: `Yes. Florida law lets a candidate sit for the exam with ${h.P.cpa.states.FL.sitHours} semester hours or 180 quarter hours, with the accounting and business concentration the board sets by rule. The license still requires 150 hours, so the remaining 30 can be completed while you take the exam.` },
     { q: 'Did Florida pass a 120-hour CPA license law in 2026?', a: `No. CS/SB 364, which would have revised the education and work experience requirements for the license, died in messages in the House on ${h.date(h.P.cpa.states.FL.billDied)}. Section 473.308 still requires 150 semester hours and one year of experience, as it did before the 2026 session.` },
     { q: 'What experience counts for a Florida CPA license?', a: 'Section 473.308 requires one year of work that involves accounting, attest, compilation, management advisory, financial advisory, tax or consulting skills, gained in government, industry, academia or public practice, as a substantial part of your duties, and verified by a CPA licensed in a US state or territory.' },
   ],

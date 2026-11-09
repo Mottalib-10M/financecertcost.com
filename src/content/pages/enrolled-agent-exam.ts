@@ -44,7 +44,7 @@ ${h.table(['SEE parts sat', 'Exam fees', 'IRS share, already in exam fees', 'Tot
 <li><strong>PTIN.</strong> ${h.m2(E.ptin)} a year, renewed each year (${h.src('irs_ptin', 'IRS, PTIN requirements')}).</li>
 <li><strong>Continuing education.</strong> ${E.ceHours} hours every ${E.renewYears} years, at least ${E.ceMinYear} a year, including ethics (${h.src('irs_maintain', 'IRS, maintain your status')}).</li>
 </ul>
-${h.box('Enrolled agent or CPA?', `<p>The two are not the same: an enrolled agent’s authority is federal and limited to tax, while a CPA is licensed by a state for accounting and audit work too. In fees, the enrolled agent route is lighter. Three SEE parts cost ${h.m(3 * E.perPart)}, close to four CPA sections at the first try, but without state board fees, education-hour rules or the lower pass rates of the ${h.a('cpa-exam-cost', 'CPA exam')}.</p>`, 'info')}
+${h.box('Enrolled agent or CPA?', `<p>The two are not the same: an enrolled agent’s authority is federal and limited to tax, while a CPA is licensed by a state for accounting and audit work too. In fees, the enrolled agent route is lighter. Three SEE parts cost ${h.m(3 * E.perPart)}, close to four CPA sections at the first try, but without state board fees or education-hour rules. The IRS publishes no pass rate for its exam; the AICPA publishes one for each section of the ${h.a('cpa-exam-cost', 'CPA exam')}, linked from the ${h.a('cpa-exam-pass-rates', 'CPA pass rates page')}.</p>`, 'info')}
 
 <h2>The line you type</h2>
 <p>Review courses for the SEE are sold by many providers; this site sells none and loads no price. Type your budget once. If you expect to buy a separate course for a part you retake, include it in the amount.</p>

@@ -39,9 +39,9 @@ describe('1. résultat pré-rempli lu comme un verdict', () => {
   it('mention localisée, repli anglais', () => {
     expect(libellesTrame('fr').exemple).toBe('Exemple, pas encore votre résultat');
     expect(libellesTrame('fr-BE').exemple).toBe('Exemple, pas encore votre résultat');
-    expect(libellesTrame('en').exemple).toBe('Example, not your result yet');
+    expect(libellesTrame('en').exemple).toBe('Example: a typical case');
     for (const l of ['es', 'de', 'it', 'pt', 'nl', 'pl', 'no']) expect(libellesTrame(l).exemple).not.toBe(libellesTrame('en').exemple);
-    expect(libellesTrame('xx').exemple).toBe('Example, not your result yet');
+    expect(libellesTrame('xx').exemple).toBe('Example: a typical case');
   });
   it('exemple tant qu’aucun champ n’est modifié', () => {
     expect(resultatExemple(undefined)).toBe(true);
@@ -189,8 +189,8 @@ describe('5. résumé replié', () => {
   });
   it('le lien est explicite et localisé', () => {
     expect(libellesTrame('fr').lireTout).toBe('Lire tout le paragraphe');
-    expect(libellesTrame('en').lireTout).toBe('Show the whole paragraph');
-    expect(libellesTrame('xx').lireTout).toBe('Show the whole paragraph');
+    expect(libellesTrame('en').lireTout).toBe('Show the rest of this paragraph');
+    expect(libellesTrame('xx').lireTout).toBe('Show the rest of this paragraph');
     for (const l of ['es', 'de', 'it', 'pt', 'nl', 'pl']) expect(libellesTrame(l).lireTout).not.toMatch(/more|plus$/i);
     const src = readFileSync(new URL('../src/components/Clamp.astro', import.meta.url), 'utf8');
     expect(src).toContain('libellesTrame(lang).lireTout');

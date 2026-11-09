@@ -171,11 +171,11 @@ export interface Route { name: string; hours: number; years: number; from?: stri
 export function cpaRoutes(s: StateCode): Route[] {
   const st = P.cpa.states[s] as any;
   const r: Route[] = [];
-  if (s === 'CA') { r.push({ name: '150 semester units and one year of experience (rules in force until December 31, 2026)', hours: 150, years: st.now.expYears, until: st.next.from }); r.push({ name: 'Bachelor’s degree with an accounting concentration and two years of experience (AB 1175)', hours: 120, years: st.next.expYears, from: st.next.from }); }
+  if (s === 'CA') { r.push({ name: '150 semester units and one year of experience (rules in force until December 31, 2026)', hours: 150, years: st.now.expYears, until: st.next.from }); r.push({ name: 'Bachelor’s degree with an accounting concentration and two years of experience (from January 1, 2027)', hours: 120, years: st.next.expYears, from: st.next.from }); }
   if (s === 'NY') { r.push({ name: '150-semester-hour pathway with one year of experience (course content rules of the 150E pathway from August 1, 2027)', hours: 150, years: 1 }); r.push({ name: '120-semester-hour pathway with two years of experience', hours: 120, years: 2, from: st.next.from }); }
   if (s === 'TX') { r.push({ name: 'Pathway A: 150 semester hours and 12 months of experience', hours: 150, years: 1 }); r.push({ name: 'Pathway B: 120 semester hours and 24 months of experience', hours: 120, years: 2, from: st.next.from }); }
   if (s === 'PA') { r.push({ name: '150 semester credits and 1,600 hours over at least 12 months', hours: 150, years: 1 }); r.push({ name: 'Bachelor’s degree with fewer than 150 credits and 3,200 hours over 24 months', hours: 120, years: 2 }); }
-  if (s === 'FL') { r.push({ name: '150 semester hours and one year of experience (section 473.308)', hours: 150, years: 1 }); }
+  if (s === 'FL') { r.push({ name: '150 semester hours and one year of experience (Florida law)', hours: 150, years: 1 }); }
   return r;
 }
 /** ISO date compare: is `d` on or after `from` and before `until`? */

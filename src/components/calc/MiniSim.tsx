@@ -10,9 +10,15 @@ import SelectField from '../ui/SelectField';
 import MentionExemple from './MentionExemple';
 import { getSpec } from '../../lib/mini-specs';
 
-interface Props { kind: string; lang?: string; href?: string; defaults?: Record<string, number>; primary?: boolean; idPrefix?: string; title?: string }
+/** A value that is words, not an amount (“not included”, a route name): shown under its label, never squeezed
+ *  into a narrow right column (4th naive round: “not / included: / type it / above” on four lines). */
+const isText = (x: string) => x.length > 12 && /[a-z]{3}/i.test(x);
 
-export default function MiniSim({ kind, lang = 'en', href, defaults = {}, primary = false, idPrefix = 'm', title }: Props) {
+/** `locked`: fields the page has already set and names in the title (“…in Texas”): kept at their default, not asked
+ *  again (4th round: “I have to choose Texas a second time”). */
+interface Props { kind: string; lang?: string; href?: string; defaults?: Record<string, number>; primary?: boolean; idPrefix?: string; title?: string; locked?: string[] }
+
+export default function MiniSim({ kind, lang = 'en', href, defaults = {}, primary = false, idPrefix = 'm', title, locked = [] }: Props) {
   const spec = getSpec(kind);
   const [v, setV] = useState<Record<string, number>>(() => Object.fromEntries(spec.inputs.map((i) => [i.id, defaults[i.id] ?? i.def])));
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -24,7 +30,7 @@ export default function MiniSim({ kind, lang = 'en', href, defaults = {}, primar
       <p className="font-serif text-lg font-semibold text-navy-900">{title ?? spec.title}</p>
       <div className="mt-3 grid gap-5 sm:grid-cols-2">
         <form className="grid content-start gap-3" onSubmit={(e) => e.preventDefault()} {...(primary ? {} : { 'data-simulateur-secondaire': '' })}>
-          {spec.inputs.filter((i) => !i.showIf || i.showIf(v)).map((i) => i.options
+          {spec.inputs.filter((i) => !locked.includes(i.id) && (!i.showIf || i.showIf(v))).map((i) => i.options
             ? <SelectField key={i.id} id={fid(i.id)} label={i.label} value={String(v[i.id])} onChange={(x) => set(i.id)(Number(x))} options={i.options} help={i.help} />
             : <NumberField key={i.id} id={fid(i.id)} label={i.label} value={v[i.id]} onChange={set(i.id)} unit={i.unit} max={i.max} decimals={i.decimals} help={i.help} />)}
         </form>
@@ -33,13 +39,16 @@ export default function MiniSim({ kind, lang = 'en', href, defaults = {}, primar
           <MentionExemple lang={lang} touched={touched} />
           <p className="text-sm font-medium text-navy-700">{out.head[0]}</p>
           <p className="tabular-nums mt-1 text-4xl font-bold text-navy-900">{out.head[1]}</p>
+          {out.alert && <p data-alerte className="mt-2 text-sm font-semibold text-navy-900">{out.alert}</p>}
           <table className="ledger mt-3 w-full text-sm"><tbody>
-            {out.rows.map(([l, x]) => <tr key={l}><td className="pr-3 text-navy-700">{l}</td><td className="tabular-nums text-right text-navy-900">{x}</td></tr>)}
+            {out.rows.map(([l, x]) => isText(x)
+              ? <tr key={l}><td colSpan={2} className="text-navy-700">{l}<span className="block font-medium text-navy-900">{x}</span></td></tr>
+              : <tr key={l}><td className="pr-3 text-navy-700">{l}</td><td className="tabular-nums whitespace-nowrap text-right text-navy-900">{x}</td></tr>)}
           </tbody></table>
           {out.note && <p className="mt-2 text-xs text-navy-600">{out.note}</p>}
         </div>
       </div>
-      {href && spec.cta && <a href={href} className="mt-4 inline-block text-sm font-medium text-accent-700 underline underline-offset-2 hover:text-accent-900">{spec.cta}</a>}
+      {out.go ? <a href={out.go[1]} className="mt-4 inline-block text-sm font-medium text-accent-700 underline underline-offset-2 hover:text-accent-900">{out.go[0]}</a> : href && spec.cta && <a href={href} className="mt-4 inline-block text-sm font-medium text-accent-700 underline underline-offset-2 hover:text-accent-900">{spec.cta}</a>}
     </div>
   );
 }

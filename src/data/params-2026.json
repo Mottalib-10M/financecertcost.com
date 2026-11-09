@@ -91,6 +91,7 @@
   "cfp_renewal": {"url": "https://www.cfp.net/for-cfp-pros/continuing-education/renewal/renewal-policies", "label": {"en": "CFP Board, CFP® certification renewal policies"}},
   "cfp_marks": {"url": "https://www.cfp.net/for-cfp-pros/market-yourself/how-to-use-the-cfp-marks", "label": {"en": "CFP Board, how to use the CFP® marks"}},
   "aicpa_rates": {"url": "https://www.aicpa-cima.com/resources/article/learn-more-about-cpa-exam-scoring-and-pass-rates", "label": {"en": "AICPA & CIMA, CPA Exam scoring and pass rates (linked only: no figure reproduced)"}},
+  "aicpa_scores": {"url": "https://www.aicpa-cima.com/resources/article/find-out-when-youll-get-your-cpa-exam-score", "label": {"en": "AICPA & CIMA, CPA Exam score release dates, read on November 9, 2026 (linked only: no date reproduced)"}},
   "aicpa_exam": {"url": "https://www.aicpa-cima.com/resources/toolkit/cpa-exam", "label": {"en": "AICPA & CIMA, everything you need to know about the CPA Exam"}},
   "va_boa": {"url": "https://boa.virginia.gov/cpa-exam/fees/", "label": {"en": "Virginia Board of Accountancy, CPA exam fees"}},
   "ca_cbt": {"url": "https://www.cba.ca.gov/cbt_public/CBT_Instructions", "label": {"en": "California Board of Accountancy, CPA exam application instructions"}},

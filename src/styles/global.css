@@ -94,3 +94,9 @@ h1 { font-weight: 700; } h2 { font-weight: 650; } h3 { font-weight: 600; }
   .clamp-more { display: inline-block; cursor: pointer; margin-top: .25rem; font-size: .875rem; font-weight: 600; color: var(--color-accent-700); text-decoration: underline; text-underline-offset: 3px; }
   .clamp-toggle:focus-visible ~ .clamp-more { outline: 2px solid var(--color-accent-500); outline-offset: 3px; }
 }
+
+/* Sections folded after their first paragraph (lib/replier-sections.ts, 4th naive round: pages too long on a phone). */
+@layer components {
+  .suite-section > summary { cursor: pointer; margin: -.25rem 0 1rem; font-size: .9375rem; font-weight: 600; color: var(--color-accent-700); text-decoration: underline; text-underline-offset: 3px; }
+  .suite-section[open] > summary { margin-bottom: .5rem; }
+}

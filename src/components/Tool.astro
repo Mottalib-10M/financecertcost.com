@@ -14,4 +14,4 @@ const href = spec.ctaPage ? route(spec.ctaPage, 'en') : undefined;
 const numDefaults: Record<string, number> = {};
 for (const [k, v] of Object.entries(props)) if (typeof v === 'number') numDefaults[k] = v;
 ---
-<MiniSim client:load kind={mini} href={href} defaults={numDefaults} primary={primary} idPrefix={idPrefix ?? (primary ? 'p' : 'm')} title={typeof props.title === 'string' ? props.title : undefined} />
+<MiniSim client:load kind={mini} href={href} defaults={numDefaults} primary={primary} idPrefix={idPrefix ?? (primary ? 'p' : 'm')} title={typeof props.title === 'string' ? props.title : undefined} locked={typeof props.lock === 'string' ? props.lock.split(',') : undefined} />

@@ -10,7 +10,7 @@ export const CURRENCY = 'USD';
 export const YEAR = 2026;
 /** Année de création du site — signal d'ancienneté (RECETTE §8.0). */
 export const SITE_FOUNDED = '2026';
-export const LAST_UPDATED = '2026-11-08';
+export const LAST_UPDATED = '2026-11-09';
 export const AUTHOR_NAME = 'Radif Partners';
 export const AUTHOR_ROLE: Record<string, string> = {"en": "Independent publisher of total-cost calculators for US finance and accounting credentials, built from the fee schedules and pass-rate files of the credentialing bodies"};
 export const AUTHOR_DESC: Record<string, string> = {"en": "Radif Partners publishes Finance Cert Cost. We read the fee pages of CFA Institute, CFP Board, the IRS, The IIA and GARP, the pass rates of CFA Institute and CFP Board, and the CPA fees and rules of five state boards of accountancy, note the date each figure was read, and turn them into one number: what a credential costs from registration to the first years of dues, including the retakes the official pass rates make likely or, for the CPA exam, the retakes you expect. We sell no review course and ask for no e-mail or phone number. Not affiliated with CFA Institute, CFP Board, AICPA, NASBA or FINRA."};

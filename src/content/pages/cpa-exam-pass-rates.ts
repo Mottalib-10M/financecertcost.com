@@ -6,19 +6,20 @@ export default definePage({
   order: 30,
   tool: { kind: 'mini:cpa-passrate' },
   related: ['cpa-exam-sections', 'cpa-exam-cost', 'cfa-pass-rates'],
-  sources: ['aicpa_rates', 'va_boa'],
+  sources: ['aicpa_rates', 'aicpa_scores', 'va_boa'],
   slug: 'cpa-exam-pass-rates',
-  nav: 'CPA exam pass rates',
+  nav: 'CPA pass rates and score release dates',
   card: 'Where the AICPA publishes the pass rate of each section, what a rate measures, and how to turn one into tries and fees.',
-  title: 'CPA Exam Pass Rates: Where to Read Them and What They Cost',
-  description: 'CPA exam pass rates for AUD, FAR, REG, BAR, ISC and TCP: where the AICPA publishes them, what a pass rate measures, and how to turn one into tries and fees.',
-  h1: 'CPA exam pass rates: where to read them, and what a rate means for your budget',
-  intro: 'Pass rates for each CPA section are published by the AICPA; this page links to them without copying them. Type the rate you read there and the number of tries you are ready to pay for: the tool gives your odds and the fees.',
+  title: 'CPA Exam Pass Rates and Score Release Dates: Where to Look',
+  description: 'CPA exam pass rates for AUD, FAR, REG, BAR, ISC and TCP, and score release dates: where the AICPA posts both, and how a pass rate turns into tries and fees.',
+  h1: 'CPA exam pass rates and score release dates: where to read them, and what a rate means for your budget',
+  intro: 'The AICPA (American Institute of Certified Public Accountants) publishes the pass rate of each CPA section and the dates scores come out; this page links to both. Type the rate you read there and the tries you are ready to pay for: the tool gives your odds and the fees.',
   resume: (h) => `The AICPA (American Institute of Certified Public Accountants), which writes the Uniform CPA Examination, publishes cumulative pass rates for each of the six sections on its scoring and pass rates page, updated as each quarter’s scores are released. This site does not reproduce them: the AICPA’s terms limit the use of its site to personal, non-commercial purposes, so the page is linked and no figure is copied. A pass rate is the share of all sittings in the period that scored 75 or more, counting first attempts and retakes together. It converts directly into money, because every sitting costs the same section fee, ${h.m2(h.P.cpa.sectionFee)} as of ${h.date(h.P.cpa.sectionFeeFrom)}: a section passed by half of its candidates takes two sittings on average, so about ${h.m(2 * h.P.cpa.sectionFee)} in fees. The tool above does that arithmetic for the rate you type, and the cost calculator adds the retakes you expect to the four section fees.`,
   faqs: (h) => [
     { q: 'What score do I need to pass a CPA exam section?', a: 'A scaled score of 75 on a scale of 0 to 99. The score is not a percentage of correct answers: the AICPA converts results to its scale, weighting questions by difficulty and format. A pass rate is the share of candidates who reached 75 in the period.' },
     { q: 'Are CPA pass rates for first-time candidates published?', a: 'Not on the AICPA page this site links to. Its cumulative figures pool everyone who sat a section in the period, first attempt or retake. Rates for first-timers that circulate elsewhere come from other sources, often a review provider, and are not repeated here.' },
     { q: 'How many times can I fail a CPA section?', a: 'The pages this site read give no cap on attempts; ask your state board if you are unsure. In practice, time is the limit: each board sets how long a passed section stays valid while you finish the others, and each new attempt is a new fee. The tool shows how the odds build up over the tries you budget for.' },
+    { q: 'When are CPA exam scores released?', a: 'On target dates the AICPA posts on its score release page, and which it says may change. Core sections are scored on a rolling basis through the year, usually a few weeks after the AICPA receives the exam file from Prometric, the company that runs the test centers. Discipline sections, given only in the first month of each quarter, have one target release date per quarter, late in that quarter.' },
     { q: 'Why does this site not show the CPA pass rates?', a: `Because the AICPA’s terms of use limit its material to personal, non-commercial use, and a site published by a company is not a personal use. The figures stay one click away on the AICPA’s own page, which also gives the quarterly detail. Every other number used here, such as the ${h.m2(h.P.cpa.sectionFee)} section fee, comes from a page whose use is not restricted.` },
   ],
   body: (h) => {
@@ -27,7 +28,11 @@ export default definePage({
     return `
 <h2>Where the rates are published</h2>
 <p>Pass rates are published by the AICPA on its ${h.src('aicpa_rates', 'CPA Exam scoring and pass rates page')}: a cumulative figure for each of the six sections, the three Core sections and the three Disciplines, for the current year to date and for past years, with the quarterly detail. Open it next to this page and type the rate of the section you are planning for into the tool above.</p>
-<p>This site does not reproduce those figures. The AICPA’s terms limit the use of its site to personal, non-commercial purposes; a site published by a company is not a personal use, so the page is linked rather than copied. The CPA totals elsewhere on this site therefore count no retake on their own: you type the number of sections you expect to retake.</p>
+<p>The CPA totals elsewhere on this site count no retake on their own: you type the number of sections you expect to retake, after reading the rates there.</p>
+
+<h2>CPA exam score release dates</h2>
+<p>The AICPA posts its calendar on its ${h.src('aicpa_scores', 'score release dates page')}: target dates, which it says can change, linked here rather than copied. Two rules explain it. The three Core sections (AUD, FAR and REG) can be taken all year and are scored on a rolling basis: the target date depends on the day the AICPA receives your exam file from Prometric, the company that runs the test centers, so a score usually arrives a few weeks after the test. The three Discipline sections (BAR, ISC and TCP) are given only in the first month of each quarter, and each of those testing months has one target release date, late in the same quarter.</p>
+<p>The calendar matters for the budget too. A failed section is known only on its release date, so the retake cannot be booked before then; for a Discipline section, it usually means waiting for the next quarter’s testing month. The AICPA also announces a different schedule from July 2027, when the exam moves to a new delivery platform, with one release date for each testing period.</p>
 
 <h2>From a rate to tries and fees</h2>
 <p>If each sitting were an independent draw at the published rate p, an average candidate would need 1 ÷ p sittings to pass, and the chance of having passed after <em>n</em> sittings would be 1 minus the chance of failing, raised to the power <em>n</em>. Each sitting costs the section fee, ${h.m2(fee)}. The table shows the arithmetic for round example rates; they are illustrations, not AICPA figures.</p>

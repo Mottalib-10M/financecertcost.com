@@ -10,7 +10,7 @@ export default definePage({
   group: 'cfa',
   order: 10,
   tool: { kind: 'mini:cfa-total' },
-  related: ['cfa-level-1', 'cfa-pass-rates', 'cfa-exam-dates', 'home'],
+  related: ['cfa-level-1', 'cfa-pass-rates', 'cfa-exam-dates', 'cpa-exam-cost', 'home'],
   sources: ['cfa_pricing', 'cfa_program', 'cfa_results', 'cfa_policies'],
   slug: 'cfa-exam-cost',
   nav: 'CFA® exam cost',
