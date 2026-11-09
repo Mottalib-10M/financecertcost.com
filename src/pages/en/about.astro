@@ -1,0 +1,31 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { LAST_UPDATED, AUTHOR_NAME, CONTACT_EMAIL, AUTHOR_ROLE } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { personSchema, organizationSchema, breadcrumbSchema, profilePageSchema } from '../../lib/seo';
+import { displayDate } from '../../lib/format';
+import { PAGES } from '../../lib/guides';
+import { helpers } from '../../lib/helpers';
+const lang = 'en';
+const h = helpers(true);
+const n = PAGES.length + 3;
+const nSrc = Object.keys(h.P.sources).length;
+---
+<PageLayout title="Finance Cert Cost: who reads the fee pages and pass rates" description="Who publishes Finance Cert Cost, why it totals credential costs from official fee pages and pass-rate files instead of course prices, and what it does not do." lang={lang} jsonLd={[personSchema(lang), organizationSchema(lang), profilePageSchema({ path: route('about', lang), lang }), breadcrumbSchema([{ name: 'Home', path: route('home', lang) }, { name: 'About', path: route('about', lang) }])]} breadcrumbs={[{ label: 'About' }]}>
+  <header class="mb-6"><p class="kicker">About</p><h1 class="mt-1 text-3xl font-bold text-navy-900 md:text-4xl">Who puts the totals together on Finance Cert Cost</h1></header>
+  <div class="prose prose-slate max-w-none">
+    <div class="not-prose mb-6"><p class="text-lg font-semibold text-navy-900">{AUTHOR_NAME}</p><p class="text-navy-700">{AUTHOR_ROLE[lang]}</p></div>
+    <p>Finance Cert Cost is published by Radif Partners, a company that builds free calculators on official data. It is for people deciding whether a finance or accounting credential is worth its price, and how to budget for it: an accounting student weighing the CPA against the enrolled agent exam, an analyst about to register for CFA® Level I, a career changer looking at CFP® certification.</p>
+    <h2>Why this site exists</h2>
+    <p>Most pages about what these credentials cost are written by companies that sell review courses. They list the fees, sometimes out of date, and move on to their packages. Few say what the published pass rates mean for the bill, though a level that half the candidates fail costs, on average, twice its fee. Some quote two different pass rates for the same session. We wanted one place that does the arithmetic from the credentialing bodies’ own figures, dated and linked.</p>
+    <h2>Where the figures come from</h2>
+    <p>Fees from CFA Institute, CFP Board, the IRS, The IIA and GARP; the CPA section fee from the Virginia Board of Accountancy; pass rates from CFA Institute’s results file and CFP Board’s exam statistics (the AICPA’s CPA pass rates are linked, not copied, since its terms limit their use to personal purposes); licensure rules from the boards of California, New York, Texas and Pennsylvania and the Florida Statutes. The parameter file cites {nSrc} pages, all read on {displayDate(h.P.retrieved_at, 'en-US')}. The <a href={route('method', lang)}>method page</a> explains each formula and its limits.</p>
+    <h2>What we are not</h2>
+    <p>We are not affiliated with CFA Institute, CFP Board, the AICPA, NASBA, FINRA, any state board, the IRS, The IIA or GARP, and none of them has reviewed this site. We do not sell or recommend review courses, and nothing here is career, financial or legal advice. Eligibility is decided only by the body that grants the credential.</p>
+    <h2>How the site is paid for</h2>
+    <p>It is free and asks for no account, e-mail or phone number. We take no commission and carry no affiliate link. If advertising is added one day it will never sit above a calculator, and it cannot use what you type, because nothing you type leaves your browser.</p>
+    <h2>Tell us when a figure is wrong</h2>
+    <p>Write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> with the page, the values you entered and the official page you rely on. The <a href={route('editorial', lang)}>editorial policy</a> explains how a correction is made. The site has {n} indexed pages, listed in the footer.</p>
+    <p class="text-sm text-navy-600">Figures last read on <time datetime={LAST_UPDATED}>{displayDate(LAST_UPDATED, 'en-US')}</time>.</p>
+  </div>
+</PageLayout>

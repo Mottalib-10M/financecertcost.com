@@ -1,0 +1,22 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import LegalIdentity from '../../components/LegalIdentity.astro';
+import { CONTACT_EMAIL, LAST_UPDATED, SITE_NAMES } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+const lang = 'en';
+---
+<PageLayout title={`Contact ${SITE_NAMES[lang]}: a fee, a pass rate, the widget`} description="Write to Finance Cert Cost when a fee, a pass rate or a state rule looks wrong, when a credentialing body publishes new figures, or to embed the cost comparator." lang={lang} noindex={true} breadcrumbs={[{ label: 'Contact' }]} showAuthor={false}>
+  <div class="prose prose-slate max-w-none">
+    <h1>Contact</h1>
+    <p>Email: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. A person reads every message.</p>
+    <h2>A figure looks wrong</h2>
+    <p>Send the page address, the values you entered and the figure you expected, with the official page you rely on: a CFA Institute, CFP Board, AICPA, IRS, IIA or GARP page, or the site of your state board of accountancy. We reread the source, correct the parameter file or the engine, add a test for the case and date the change.</p>
+    <h2>What we cannot do</h2>
+    <p>We cannot tell you whether you are eligible, review your transcripts or your experience, or register you for an exam. Those questions go to the body that grants the credential or to your state board. Please do not send candidate numbers, transcripts or score reports.</p>
+    <h2>Embedding the comparator</h2>
+    <p>Universities, student accounting societies and career writers can show the cost comparator in an iframe at no cost. The code and the conditions are on the <a href={route('widget', lang)}>embed page</a>.</p>
+    <h2>Publisher</h2>
+    <LegalIdentity lang={lang} />
+    <p class="text-sm">Last updated: {LAST_UPDATED}.</p>
+  </div>
+</PageLayout>

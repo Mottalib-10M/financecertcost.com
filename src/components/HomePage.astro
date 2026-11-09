@@ -1,0 +1,183 @@
+---
+/**
+ * Home: the credential cost comparator on the first screen, then the reference page (RECETTE §5, §21): the six
+ * credentials side by side (floor and expected exam fees), why pass rates reorder them, the dated fee and rule
+ * changes of 2025 to 2027, three candidates worked through, what is left out, sources and the list of pages.
+ * Every figure comes from the engine or the parameter file.
+ */
+import PageLayout from '../layouts/PageLayout.astro';
+import Tool from './Tool.astro';
+import Sources from './Sources.astro';
+import { route } from '../i18n/routes';
+import { PAGES } from '../lib/guides';
+import { groupLabel, GROUPS_ORDER } from '../i18n/nav';
+import { helpers } from '../lib/helpers';
+import { LAST_UPDATED, AUTHOR_NAME } from '../data/site-config';
+import { displayDate, triesInWords as tw } from '../lib/format';
+import { faqSchema, webApplicationSchema, websiteSchema, organizationSchema } from '../lib/seo';
+const lang = 'en';
+const h = helpers(true);
+const { P, E, m, m2, pc } = h;
+
+// The comparator's default case: CPA, early registration, no prep.
+// One CPA headline on every page: the four sections passed the first time. No AICPA pass rate is used since
+// 2026-11-08 (its terms limit use to personal, non-commercial purposes); retakes are typed by the reader.
+const cpa = E.cpaTotal({ state: null, retakes: 0, prep: 0 });
+const cpaFirst = cpa.exams;
+const cfaE = E.cfaTotal({ window: 'early', rateBasis: 'tenYear', prepPerLevel: 0, duesPerYear: 0, duesYears: 0 });
+const cfaS = E.cfaTotal({ window: 'standard', rateBasis: 'tenYear', prepPerLevel: 0, duesPerYear: 0, duesYears: 0 });
+const cfp = E.cfpTotal({ window: 'early', education: 0, prep: 0, years: 0, basis: 'latest' });
+const fl = E.floors();
+const ea = E.eaTotal({ sittings: 3, prep: 0, years: 1 });
+const cia = E.ciaTotal({ member: false, year: '2026', extraSittings: 0, prep: 0 });
+const ciaM = E.ciaTotal({ member: true, year: '2026', extraSittings: 0, prep: 0 });
+const frm = E.frmTotal({ window: 'early', extraSittings: 0, prep: 0 });
+
+const att = (n: number, min: number) => `${tw(n)} (${h.num2(n)} on average; ${min} at the least)`;
+const cfaSit = cfaE.rows.reduce((a, r) => a + r.sittings, 0);
+// No pass rate published: said in the comparison itself (3rd round: “EA $1,110 looks cheaper than the CPA, but it is not the same count”).
+const firstOnly = (add: string) => `<strong>First-try price only</strong>: no pass rate published, so no retake counted. Each retake adds ${add}.`;
+const cpaOnly = `<strong>First-try price only</strong>: retakes are the ones you type, since this site does not copy the AICPA’s pass rates. Each section retaken adds ${m2(P.cpa.sectionFee)}.`;
+const ciaPart = (fl.cia[1] - cia.application) / 3;
+// EA, CIA and FRM: no pass rate, so the second figure says what one retake adds instead of a blank
+// (2nd round: “the comparison stops halfway”).
+// “What you need first”: only what the credential's own page states from its sources (3rd round: “can I even sit it?”).
+const compare = [
+  { id: 'cpa-exam-cost', name: 'CPA exam (four sections)', body: 'NASBA (the national association of state boards) and your state board', need: 'College study: 150 semester hours in most states (about a fifth year after a bachelor’s degree), or 120 hours with an extra year of work where a state allows it; work experience for the license.', floor: m(cpaFirst), exp: cpaOnly, basis: `none copied: <a href="${P.sources.aicpa_rates.url}" target="_blank" rel="nofollow noopener noreferrer">pass rates are published by the AICPA</a>` },
+  { id: 'cfa-exam-cost', name: 'CFA® Program (three levels)', body: 'CFA Institute', need: 'Entry rules not covered by this site: check them with CFA Institute. The three levels are taken one after the other.', floor: m(fl.cfa[0]), exp: m(cfaE.exams), basis: `CFA Institute pass rates, 2017 to 2026: ${att(cfaSit, 3)}` },
+  { id: 'cfp-certification-cost', name: 'CFP® certification', body: 'CFP Board', need: `A bachelor’s degree and CFP Board coursework; ${h.num(P.cfp.experience.standard)} hours of work experience (${h.num(P.cfp.experience.apprenticeship)} as an apprentice) to be certified.`, floor: m(fl.cfp[0]), exp: m(cfp.exams + P.cfp.application), basis: `CFP Board pass rates, ${h.ml(E.cfpLatest().w)}: ${att(cfp.sittings, 1)}` },
+  { id: 'enrolled-agent-exam', name: 'Enrolled agent (three-part IRS exam)', body: 'the IRS', need: 'No education-hour rule. After the exam: enrollment with the IRS and a tax compliance check.', floor: m(fl.ea[0]), exp: firstOnly(m(P.ea.perPart)), basis: 'none: the IRS publishes no pass rate' },
+  { id: 'cia-exam', name: 'CIA (three parts)', body: 'The IIA (Institute of Internal Auditors)', need: `Program requirements set by The IIA, to be met within ${P.cia.eligibilityYears} years of acceptance; details on its site.`, floor: `${m(fl.cia[1])} (${m(fl.cia[0])} for IIA members)`, exp: firstOnly(`about ${m(ciaPart)}`), basis: 'none found' },
+  { id: 'frm-exam', name: 'FRM® (two parts)', body: 'GARP (Global Association of Risk Professionals)', need: 'A work-experience requirement set by GARP; details on its site.', floor: m(fl.frm[0]), exp: firstOnly(m(P.frm.early)), basis: 'none found' },
+];
+const rows = compare.map((c) => [`<a href="${route(c.id, lang)}">${c.name}</a><br><span class="text-xs text-navy-600">Paid to ${c.body}</span>`, c.need, c.floor, c.exp, c.basis]);
+// What each credential is, in one line (naive test of 2026-11-08: “I see prices for letters I do not know”).
+// Every fact here is stated, with its source, on the credential's own page.
+const creds = [
+  { id: 'cpa-exam-cost', name: 'CPA, Certified Public Accountant', what: 'the state license for accounting and audit work.', need: 'Most states ask for 150 college semester hours, about a fifth year after a bachelor’s degree; more and more accept 120 hours, usually a bachelor’s degree, with more work experience.' },
+  { id: 'enrolled-agent-exam', name: 'EA, Enrolled Agent', what: 'a tax practitioner authorized by the IRS to represent taxpayers before it.', need: 'No education-hour rule: a three-part IRS exam, the Special Enrollment Examination (SEE), then enrollment and a tax compliance check.' },
+  { id: 'cfp-certification-cost', name: 'CFP® certification (CERTIFIED FINANCIAL PLANNER®)', what: 'for advice on personal financial planning.', need: `A bachelor’s degree, CFP Board coursework, one exam and ${h.num(P.cfp.experience.standard)} hours of experience (${h.num(P.cfp.experience.apprenticeship)} as an apprentice).` },
+  { id: 'cfa-exam-cost', name: 'CFA® Program (Chartered Financial Analyst®)', what: 'three exams set by CFA Institute, for investment professionals.', need: 'The three levels are taken one after the other, usually over several years.' },
+  { id: 'cia-exam', name: 'CIA, Certified Internal Auditor', what: 'the designation for internal auditors, granted by The Institute of Internal Auditors (The IIA).', need: 'An application, then three exam parts.' },
+  { id: 'frm-exam', name: 'FRM®, Financial Risk Manager', what: 'a risk management designation from GARP, the Global Association of Risk Professionals.', need: 'Two exams, Part I and Part II, and an experience requirement.' },
+];
+
+const changes = [
+  { d: P.cfa.enrollmentRemoved, t: `CFA Institute removes the one-time ${m(P.cfa.enrollmentOld)} enrollment fee.`, id: 'cfa-exam-cost' },
+  { d: '2026-02-01', t: `New CFA® exam prices apply from the ${P.cfa.newPricingFrom} window: ${m(P.cfa.fees.l1.early)} early for Levels I and II, ${m(P.cfa.fees.l3.early)} for Level III.`, id: 'cfa-exam-cost', month: true },
+  { d: P.ea.vendorFrom, t: `A new company, ${P.ea.vendor}, starts running the enrolled agent exam.`, id: 'enrolled-agent-exam' },
+  { d: P.ea.userFeeFrom, t: `The IRS’s own share of each enrolled agent exam part falls from ${m(P.ea.irsUserFeeOld)} to ${m(P.ea.irsUserFee)}; a part now costs ${m(P.ea.perPart)}.`, id: 'enrolled-agent-exam' },
+  { d: P.cpa.sectionFeeFrom, t: `Each CPA exam section costs ${m2(P.cpa.sectionFee)}.`, id: 'cpa-exam-cost' },
+  { d: P.cpa.states.TX.next.from, t: 'Texas opens Pathway B: 120 semester hours and 24 months of experience.', id: 'cpa-requirements-texas' },
+  { d: P.cpa.states.NY.next.from, t: 'New York opens its 120-semester-hour pathway with two years of experience.', id: 'cpa-requirements-new-york' },
+  { d: P.cpa.states.CA.next.from, t: 'California drops the 150-unit requirement and asks for two years of experience instead.', id: 'cpa-requirements-california' },
+  { d: P.cia.y2027.from, t: `The IIA’s 2027 CIA price list applies: ${m(P.cia.y2027.p1[0])} for Part 1 for members.`, id: 'cia-exam' },
+  { d: '2027-08-01', t: 'New York’s 150-hour pathway starts requiring set course content.', id: 'cpa-requirements-new-york' },
+];
+const fmtD = (c: (typeof changes)[number]) => (c.month ? h.ml(c.d.slice(0, 7)) : displayDate(c.d, 'en-US'));
+
+// Three candidates.
+const tx = E.cpaTotal({ state: 'TX', retakes: 0, prep: 0 });
+
+// Same pass rates and deadline as the CFP® page and the table (3rd round: “$1,520, $1,460, $1,424: which one?”).
+const cfp5 = E.cfpTotal({ window: 'early', education: 0, prep: 0, years: 5, basis: 'latest' });
+
+const faqs = [
+  { q: 'Which finance certification is the cheapest to earn?', a: `On fees alone, at the first try, the CIA for a member of The IIA (${m(ciaM.total)} at 2026 prices; ${m(cia.total)} for a non-member), then the CPA exam (${m(4 * P.cpa.sectionFee)} in section fees), the CFP® exam with its application (${m(fl.cfp[0])}) and the enrolled agent exam with enrollment (${m(fl.ea[0])}). Retakes change the order: each CPA section retaken adds ${m2(P.cpa.sectionFee)}, and the CFA® exams, with their published pass rates, rise to about ${m(cfaE.exams)}.` },
+  { q: 'Which finance certification costs the most?', a: `The CFA® Program: about ${m(cfaE.exams)} in exam fees once retakes at CFA Institute’s ten-year pass rates are counted, with early registration. Only a candidate who passes all three exams at the first try pays less, ${m(fl.cfa[0])}. Prep for three exams and the dues after the charter come on top.` },
+  { q: 'How is the expected number of retakes worked out?', a: 'From the pass rates CFA Institute and CFP Board publish. When about half of candidates pass, an average candidate sits the exam twice; when two in three pass, about one and a half times. For the CFP® exam, where CFP Board publishes separate rates for first attempts and retakes, the first attempt uses one and later attempts the other. For the CPA exam you type the retakes you expect. Your own odds may be better or worse than the average.' },
+  { q: 'Why are review course prices not included?', a: 'Because this site sells none and has not checked any. Review providers set their own prices and packages, often the largest single line of the budget. Every calculator has a field for your own figure and adds it to the official fees; on the CFA® pages the figure is per sitting.' },
+  { q: 'Are these figures up to date?', a: `Every fee and rate was read on the official page named next to it, on ${h.read}. Fees change, often once a year, and some changes are already scheduled, such as the CIA price list of ${h.date(P.cia.y2027.from)}. The page you pay on is the one that counts; the date of each source is given so you can check.` },
+  { q: 'Is this site connected to CFA Institute, CFP Board or the AICPA?', a: 'No. It is an independent site, not affiliated with CFA Institute, CFP Board, AICPA, NASBA or FINRA, nor with any state board, the IRS, The IIA or GARP. CFA®, CFP® and the other marks belong to their owners and are used only to name the credentials.' },
+  { q: 'Do I need to give an e-mail to use the calculators?', a: 'No. There is no form, no account and no newsletter. The calculators run in your browser and nothing you type is sent anywhere; the address bar changes only if you choose to copy a link to your own figures. Nothing is stored after you close the page.' },
+];
+const jsonLd = [webApplicationSchema({ name: 'Finance certification cost comparator', description: 'Total cost of the CPA, CFA®, CFP®, enrolled agent, CIA and FRM® credentials: official fees, expected retakes from published pass rates or typed by you, prep and dues.', path: route('home', lang), lang }), websiteSchema(lang), organizationSchema(lang), faqSchema(faqs, lang)];
+const groups = GROUPS_ORDER.map((g) => ({ g, pages: PAGES.filter((p) => p.group === g) })).filter((x) => x.pages.length);
+---
+<PageLayout title="Finance Certification Cost 2026: CPA, CFA®, CFP® and More" description="Finance certification cost in 2026: CPA, CFA®, CFP®, EA, CIA and FRM® official fees, the retakes published pass rates make likely, your prep and dues, compared." lang={lang} jsonLd={jsonLd} faqs={faqs.map((f, i) => ({ ...f, open: i < 2 }))}>
+  <header class="mb-3">
+    <h1 class="text-[1.75rem] font-bold text-navy-900 max-sm:leading-tight sm:text-3xl md:text-4xl">Finance certification cost: the exam fees you will really pay, retakes included</h1>
+    <p class="mt-2 text-base text-navy-700 sm:text-lg">The CPA exam costs {m(cpaFirst)} in fees if its four sections pass the first time, plus {m2(P.cpa.sectionFee)} for each section you retake; counting the retakes most candidates need, the three CFA® exams cost about {m(cfaE.exams)}. Official fees for six US credentials. No course to sell, no e-mail asked.</p>
+    <p class="mt-1 text-xs text-navy-600">Independent site: not run by, or affiliated with, any body that sets these exams or charges these fees.</p>
+    <p class="mt-2 text-sm"><a href="#creds-title" class="font-medium text-accent-700 underline underline-offset-2">New to these credentials? What each one is, and what you need first ↓</a></p>
+  </header>
+  <div data-outil class="mb-4"><Tool tool={{ kind: 'mini:total' }} primary={true} /></div>
+  <p class="mb-8 text-sm text-navy-600">Fees and pass rates read on the official pages, last updated <time datetime={LAST_UPDATED}>{displayDate(LAST_UPDATED, 'en-US')}</time> · {AUTHOR_NAME} · <a href={route('method', lang)} class="underline hover:text-navy-900">How the totals are built</a> · <a href={route('about', lang)} class="underline hover:text-navy-900">Who publishes this site</a></p>
+
+  <section class="not-prose my-10" aria-labelledby="creds-title">
+    <h2 id="creds-title" class="text-2xl font-bold text-navy-900">New to these credentials? What each one is, and what you need first</h2>
+    <dl class="mt-4 space-y-4">
+      {creds.map((c) => (
+        <div class="border-l-4 border-accent-600 pl-4">
+          <dt class="font-semibold text-navy-900"><a href={route(c.id, lang)} class="text-accent-700 underline underline-offset-2">{c.name}</a></dt>
+          <dd class="text-navy-800">{c.what} <strong>What you need first:</strong> {c.need}</dd>
+        </div>
+      ))}
+    </dl>
+    <p class="mt-3 text-sm text-navy-700">Hesitating between tax work and accounting? The <a href={route('enrolled-agent-exam', lang)} class="underline">enrolled agent page</a> compares the EA with the CPA.</p>
+  </section>
+
+  <section class="not-prose my-10" aria-labelledby="compare-title">
+    <h2 id="compare-title" class="text-2xl font-bold text-navy-900">Six credentials side by side</h2>
+    <p class="mt-2 text-navy-800">Two figures for each: what the fees come to if every exam is passed the first time, and what they come to once the retakes most candidates need are counted. Four credentials are shown at the first-try price only: three have no published pass rate, and the CPA’s are published by the AICPA but not copied here. Neither figure includes prep or the yearly fees paid after you qualify.</p>
+    <Fragment set:html={h.table(['Credential', 'What you need first', 'All passed the first time', 'With average retakes', 'Pass rates used'], rows, `Official fee pages and pass-rate files, read on ${h.read}. Early registration where there is a choice. An attempt is one try at one exam; ${h.num2(cfaSit)} CFA® attempts is an average over all candidates: ${tw(cfaSit)}. CFP®: the ${m(P.cfp.application)} application is included. Enrolled agent: enrollment and one year of the tax preparer ID (PTIN) included.`, ['l', 'l', 'r', 'r', 'l'])} />
+    <p class="mt-2 text-sm text-navy-700">The CPA figure is the same whichever fourth section you pick, and leaves out state board fees; the CPA page adds them for five states, with the retakes you type.</p>
+  </section>
+
+  <section class="mt-12 mb-10" aria-labelledby="guides-title">
+    <h2 id="guides-title" class="text-2xl font-bold text-navy-900">Calculators by credential</h2>
+    <div class="mt-4 grid gap-6 md:grid-cols-2">
+      {groups.map(({ g, pages }) => (
+        <div class="border-t-4 border-accent-600 pt-3">
+          <h3 class="text-lg font-semibold text-navy-900">{groupLabel(g)}</h3>
+          <ul class="mt-2 space-y-2">{pages.map((p) => <li><a href={route(p.id, lang)} class="font-medium text-accent-700 underline-offset-2 hover:underline">{p.nav}</a></li>)}</ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <div class="prose prose-slate max-w-none">
+    <h2>Why the price list is not the budget</h2>
+    <p>The comparator opens on the CPA exam. Its four sections cost {m2(P.cpa.sectionFee)} each, so {m(cpaFirst)} if every one is passed at the first attempt, or sitting. A failed section is paid again at the same fee, so type how many sections you think you will retake and the comparator adds them; until you do, its result is marked as an example. Pass rates for each section are published by the AICPA (American Institute of Certified Public Accountants), which writes the exam, on <Fragment set:html={h.src('aicpa_rates', 'its scoring and pass rates page')} />; this site does not copy them. Pick the CFA® Program or the CFP® certification in the first field and the retakes are counted from the pass rates their bodies publish: the three CFA® exams come to about {m(cfaE.exams)}. That figure, not the price list, is what a budget should start from.</p>
+    <p>Most pages that answer “how much does the CPA exam cost” or what the CFA® Program costs are written by review-course sellers, and end on a course. Some still list fees that no longer exist, such as the CFA® enrollment fee removed in April 2025; few turn a pass rate into money. This site reads each figure on the official page, names the page and the date, and puts the retakes in the total.</p>
+
+    <h2>Why pass rates reorder the list</h2>
+    <details><summary class="cursor-pointer font-medium text-accent-700 underline underline-offset-2">Read the explanation</summary>
+    <p>At the first try, four credentials cost roughly the same: the CPA exam ({m(4 * P.cpa.sectionFee)}), the CFP® exam with its application ({m(fl.cfp[0])}), the enrolled agent exam with enrollment ({m(fl.ea[0])}) and the CIA at member prices of The IIA ({m(ciaM.total)}; {m(cia.total)} for a non-member). The FRM® is about {m(fl.frm[0])} with early registration, the CFA® Program {m(fl.cfa[0])} or more. Once pass rates enter, the order changes. The CFP® exam passes about two candidates in three, so retakes add {m(cfp.exams - cfp.fee)} on average at the early bird fee. The CFA® levels pass about four to five candidates in ten, so retakes add {m(cfaE.retakes)} at early prices, for the {m(cfaE.exams)} shown above. The CPA exam is shown at its first-try price, {m(cpaFirst)}: its pass rates are on the AICPA’s page, and the retakes you expect are yours to type.</p>
+    <p>These are averages over everyone who sat, first attempt or not. They are the right numbers for a budget, since nobody can know in advance which side of the average they will fall on, and the wrong numbers to judge your own chances. A candidate who completes a full study plan does better; one who sits underprepared does worse. The CFA® and CFP® calculators let you change the rate, or set the first try as the plan, and see what a retake would cost; the CPA calculators ask how many sections you expect to retake.</p>
+    </details>
+
+    <h2>Prep: the line only you can fill in</h2>
+    <p>Review courses, question banks, books and mock exams can cost as much as the exam fees, or more. Their prices depend on the provider, the package and the discounts of the day, and this site has no way to check them without becoming a seller. So every calculator starts at zero and asks for your figure. For the CFA® Program the amount you type is per sitting, since each level has its own material, and it is multiplied by the expected sittings; for the other credentials it is added once. Include a second purchase in your figure if you expect one.</p>
+  </div>
+
+  <section class="not-prose my-10" aria-labelledby="changes-title">
+    <h2 id="changes-title" class="text-2xl font-bold text-navy-900">What changed, and what is about to</h2>
+    <p class="mt-2 text-navy-800">Fee and rule changes from April 2025 to August 2027, each read on the official page. Guides written before these dates often still show the old figure.</p>
+    <details class="mt-3"><summary class="cursor-pointer font-medium text-accent-700 underline underline-offset-2">Show the {changes.length} dated changes</summary>
+    <ol class="mt-4 space-y-3 border-l-2 border-accent-600 pl-5">
+      {changes.map((c) => (
+        <li><p class="text-sm font-semibold text-navy-700"><time datetime={c.d}>{fmtD(c)}</time></p><p class="text-navy-900">{c.t} <a href={route(c.id, lang)} class="text-sm text-accent-700 underline">Details</a></p></li>
+      ))}
+    </ol>
+    </details>
+  </section>
+
+  <div class="prose prose-slate max-w-none">
+    <h2>Three candidates, worked through</h2>
+    <details><summary class="cursor-pointer font-medium text-accent-700 underline underline-offset-2">Show the three examples: a Texas accountant, a CFA® analyst, a CFP® planner</summary>
+    <p><strong>An accounting graduate in Texas with 120 semester hours, a bachelor’s degree.</strong> Since {h.date(P.cpa.states.TX.next.from)}, Texas lets her be licensed with 24 months of experience, so she does not need a fifth year of school. She picks Tax Compliance and Planning as her fourth section because she works in tax; it costs the same as the other two choices. If she passes each section the first time she pays {m(tx.exams)} in section fees, the {m(cpaFirst)} shown above, {m(P.cpa.states.TX.perSection * tx.sittings)} in Texas board fees at {m(P.cpa.states.TX.perSection)} per section, and {m(P.cpa.states.TX.certificate)} for the certificate. Each section she retakes adds {m2(E.cpaRetakePrice('TX'))}: the section fee again and the {m(P.cpa.states.TX.perSection)} board fee. Two Texas fees were not on the pages we read and are not counted. The <a href={route('cpa-requirements-texas', lang)}>Texas page</a> sets out both routes.</p>
+    <p><strong>An analyst who registers for each CFA® level at the standard price, not the early one.</strong> At CFA Institute’s ten-year pass rates he should expect {tw(cfaSit)} across the three levels, as in the comparator. The comparator’s {m(cfaE.exams)} assumes early registration every time; at the standard price each try costs {m(P.cfa.fees.l1.standard - P.cfa.fees.l1.early)} more, so the same tries come to {m(cfaS.exams)}. Level I is where most of the retakes are; the <a href={route('cfa-level-1', lang)}>Level I page</a> lists every session’s rate.</p>
+    <p><strong>A planner heading for CFP® certification, registering early and counting five certified years.</strong> With the same pass rates as the table and the CFP® page ({pc(cfp5.p1)} at the first attempt, {pc(cfp5.pr)} for a retake), she expects {tw(cfp5.sittings)} ({h.num2(cfp5.sittings)} on average). Her exam fees and the {m(P.cfp.application)} application come to the {m(cfp5.exams + P.cfp.application)} shown above; {m(5 * P.cfp.annual)} in yearly certification fees bring her to {m(cfp5.total)} before the education program, which a CFP Board-registered school prices on its own. The <a href={route('cfp-certification-cost', lang)}>CFP® certification cost</a> page adds it.</p>
+    </details>
+
+    <h2>What the totals leave out</h2>
+    <p>Only fees charged by the credentialing bodies and the state boards are loaded. Not included: review courses and books (you type them), CFA Institute and local society dues (you type them, because we could not read a current schedule on CFA Institute’s site), the education program for the CFP® certification, fees we could not confirm (the California CPA license fee, Florida’s board fees, two Texas fees, the New York and Pennsylvania exam application fees), travel, and time off work. The salary that a credential may bring is not estimated either: this site measures cost, not return.</p>
+    <p>The time a credential takes is part of its cost but is not converted into dollars here. The pages on <a href={route('cfa-exam-dates', lang)}>CFA® exam dates</a>, <a href={route('cfp-requirements', lang)}>CFP® experience hours</a> and <a href={route('cpa-requirements', lang)}>CPA licensure routes</a> give the calendar instead.</p>
+
+  </div>
+
+  <div class="prose prose-slate max-w-none">
+    <Sources lang={lang} intro="Each exam fee, pass rate and board rule on this page comes from the official pages below (the credential bodies, the IRS and five state boards), read on" />
+  </div>
+</PageLayout>

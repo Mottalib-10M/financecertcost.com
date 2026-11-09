@@ -1,0 +1,21 @@
+{
+ "name": "Finance Cert Cost",
+ "short_name": "Finance Cert Cost",
+ "description": "Total cost of the CFA, CPA, CFP, EA, CIA and FRM credentials in 2026: official fees by registration window, retakes from published pass rates, prep and dues.",
+ "start_url": "/en/",
+ "display": "standalone",
+ "background_color": "#ffffff",
+ "theme_color": "#1E5A4E",
+ "icons": [
+  {
+   "src": "/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  }
+ ]
+}

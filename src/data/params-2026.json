@@ -1,0 +1,115 @@
+{
+ "_lisezmoi": "Every fee, rule and pass rate shown by the site lives here (no AICPA pass rate since 2026-11-08: its terms limit use to personal, non-commercial purposes), read by hand on the page named in `sources` on `retrieved_at` (RECETTE §4, §12.1). Manual update: no schedule is promised.",
+ "year": 2026,
+ "retrieved_at": "2026-11-07",
+ "valid_from": "2026-01-01",
+ "valid_to": "2027-12-31",
+ "source": "Fee pages of CFA Institute, CFP Board, IRS, The IIA, GARP and five state boards of accountancy; pass-rate files of CFA Institute and CFP Board",
+ "source_url": "https://www.irs.gov/tax-professionals/enrolled-agents/enrolled-agents-frequently-asked-questions",
+ "cfa": {
+  "fees": {"l1": {"early": 1140, "standard": 1490}, "l2": {"early": 1140, "standard": 1490}, "l3": {"early": 1240, "standard": 1590}},
+  "fees2025": {"l1": {"early": 990, "standard": 1290}, "l2": {"early": 990, "standard": 1290}, "l3": {"early": 1090, "standard": 1390}},
+  "enrollmentOld": 350, "enrollmentRemoved": "2025-04-29", "pricingAnnounced": "2024-12-18", "newPricingFrom": "February 2026",
+  "programTotal": {"low": 3520, "high": 4570},
+  "reschedule": 250, "maxAttemptsPerLevel": 6, "maxPerYear": 2,
+  "examHours": 4.5, "resultsWeeks": {"min": 5, "max": 9},
+  "offered": {"l1": [2, 5, 8, 11], "l2": [5, 8, 11], "l3": [2, 8]},
+  "sessions": [
+   {"w": "2024-02", "l1": [16932, 7415], "l3": [13619, 6734]},
+   {"w": "2024-05", "l1": [21116, 9666], "l2": [14304, 8386]},
+   {"w": "2024-08", "l1": [24937, 11050], "l2": [8879, 4166], "l3": [16947, 8081]},
+   {"w": "2024-11", "l1": [26404, 11293], "l2": [13589, 5324]},
+   {"w": "2025-02", "l1": [19848, 8935], "l3": [11131, 5441]},
+   {"w": "2025-05", "l1": [24227, 10916], "l2": [15000, 8062]},
+   {"w": "2025-08", "l1": [26192, 11262], "l2": [9898, 4359], "l3": [14538, 7247]},
+   {"w": "2025-11", "l1": [26752, 11402], "l2": [15003, 6272]},
+   {"w": "2026-02", "l1": [24006, 10742], "l3": [11269, 5641]},
+   {"w": "2026-05", "l1": [31566, 12163], "l2": [18111, 7730]},
+   {"w": "2026-08", "l1": [28145, 12168], "l2": [10004, 4484], "l3": [13940, 6522]}
+  ],
+  "tenYear": {"label": "2017-2026", "l1": [1044523, 422652], "l2": [459666, 207705], "l3": [292511, 147441]},
+  "sinceStart": {"label": "1963-2026", "l1": [2452853, 1016232], "l2": [1107936, 508502], "l3": [655659, 357002]}
+ },
+ "cfp": {
+  "exam": {"early": 825, "standard": 925, "late": 1025},
+  "application": 250, "annual": 575, "lateRenewal": 75,
+  "ceHours": 30, "ceEthics": 2, "ceYears": 2,
+  "experience": {"standard": 6000, "apprenticeship": 4000},
+  "windows": [
+   {"id": "2026-10", "test": "October 29 to November 5, 2026", "opens": "2026-06-02", "earlyClose": "2026-09-01", "standardClose": "2026-10-06", "lateClose": "2026-10-13", "eduDeadline": "2026-10-06"},
+   {"id": "2027-03", "test": "March 16 to 23, 2027", "opens": "2026-10-21", "eduDeadline": "2027-02-23"},
+   {"id": "2027-07", "test": "July 13 to 20, 2027", "opens": "2027-02-17", "eduDeadline": "2027-06-22"}
+  ],
+  "sessions": [
+   {"w": "2023-03", "all": [3527, 2300], "first": [2742, 1885], "repeat": [785, 415]},
+   {"w": "2023-07", "all": [2926, 1950], "first": [2237, 1550], "repeat": [689, 400]},
+   {"w": "2023-11", "all": [3386, 2172], "first": [2621, 1773], "repeat": [765, 399]},
+   {"w": "2024-03", "all": [3683, 2488], "first": [2806, 2012], "repeat": [877, 476]},
+   {"w": "2024-07", "all": [2999, 1939], "first": [2284, 1582], "repeat": [715, 357]},
+   {"w": "2024-11", "all": [3755, 2336], "first": [2900, 1908], "repeat": [855, 428]},
+   {"w": "2025-03", "all": [3854, 2502], "first": [2881, 1960], "repeat": [973, 542]},
+   {"w": "2025-07", "all": [3214, 2045], "first": [2496, 1644], "repeat": [718, 401]},
+   {"w": "2025-11", "all": [3970, 2528], "first": [3048, 1993], "repeat": [922, 535]},
+   {"w": "2026-03", "all": [4391, 2927], "first": [3310, 2280], "repeat": [1081, 647]},
+   {"w": "2026-07", "all": [3621, 2388], "first": [2768, 1910], "repeat": [853, 490]}
+  ]
+ },
+ "cpa": {
+  "sectionFee": 268.59, "sectionFeeFrom": "2026-07-04",
+  "sectionHours": 4,
+  "va": {"application": 120, "reexam": 20, "reexamSuspendedTo": "2026-09-30"},
+  "states": {
+   "CA": {"name": "California", "examFirst": 100, "examRepeat": 50, "license": null, "sitUnits": "a bachelor's degree with 24 semester units in accounting and 24 in business-related subjects", "now": {"hours": 150, "expYears": 1}, "next": {"from": "2027-01-01", "rule": "a bachelor's degree with an accounting concentration, no total-unit count", "expYears": 2}, "nasbaWindowMonths": 9},
+   "FL": {"name": "Florida", "examFirst": null, "examRepeat": null, "license": null, "sitHours": 120, "now": {"hours": 150, "expYears": 1}, "billDied": "2026-03-13"},
+   "NY": {"name": "New York", "examFirst": null, "license": 427, "age": 21, "now": {"hours": 150, "expYears": 1, "until": "2027-08-01", "fileBy": "2027-05-01"}, "next": {"from": "2026-11-21", "hours": 120, "expYears": 2}},
+   "TX": {"name": "Texas", "perSection": 15, "certificate": 50, "windowDays": 180, "now": {"hours": 150, "expMonths": 12, "partTimeHours": 2000, "partTimeYears": 2}, "next": {"from": "2026-08-01", "hours": 120, "expMonths": 24, "partTimeHours": 4000, "partTimeYears": 4}, "ethicsCourseHours": 3},
+   "PA": {"name": "Pennsylvania", "license": 65, "renewal": 100, "sitCredits": 120, "sitAccounting": 24, "now": {"hours": 150, "expHours": 1600, "expMonths": 12}, "next": {"hours": 120, "expHours": 3200, "expMonths": 24}, "cpe": 80, "cpeYears": 2}
+  }
+ },
+ "ea": {"perPart": 317, "parts": 3, "irsUserFee": 66, "irsUserFeeOld": 99, "userFeeFrom": "2026-04-20", "vendor": "PSI Services", "vendorFrom": "2026-03-01", "enrollment": 140, "ptin": 18.75, "carryoverYears": 3, "applyWithinYears": 1, "ceHours": 72, "ceEthics": 6, "ceMinYear": 16, "renewYears": 3, "feeFaqUpdated": "2026-04-09"},
+ "cia": {
+  "y2026": {"application": [120, 240], "p1": [310, 445], "p2": [280, 415], "p3": [280, 415]},
+  "y2027": {"from": "2027-01-04", "application": [145, 195], "p1": [355, 475], "p2": [325, 435], "p3": [325, 435]},
+  "eligibilityYears": 3
+ },
+ "frm": {"enrollment": 400, "early": 600, "standard": 800, "parts": 2,
+  "sessions": [
+   {"id": "2027-05", "p1": "May 8-13, 2027", "p2": "May 15-17, 2027", "early": "December 1", "standard": "February 1"},
+   {"id": "2027-08", "p1": "August 13-14, 2027 (morning)", "p2": "August 13-14, 2027 (afternoon)", "early": "March 1", "standard": "May 1"},
+   {"id": "2027-11", "p1": "November 13-18, 2027", "p2": "November 20-22, 2027", "early": "May 1", "standard": "August 1"}
+  ]},
+ "sources": {
+  "cfa_pricing": {"url": "https://www.cfainstitute.org/about/press-room/2024/pricing-changes-for-cfa-program", "label": {"en": "CFA Institute, pricing changes for the CFA® Program (press release, 18 December 2024)"}},
+  "cfa_program": {"url": "https://www.cfainstitute.org/programs/cfa-program", "label": {"en": "CFA Institute, CFA® Program overview (cost of the three levels)"}},
+  "cfa_results": {"url": "https://www.cfainstitute.org/sites/default/files/docs/programs/cfa-program/candidate-resources/1963-current-candidate-examination-results_0.pdf", "label": {"en": "CFA Institute, CFA® exam results 1963-2026 (PDF)"}},
+  "cfa_policies": {"url": "https://www.cfainstitute.org/programs/cfa-program/policies", "label": {"en": "CFA Institute, CFA® Program policies (attempts and retakes)"}},
+  "cfa_exam": {"url": "https://www.cfainstitute.org/programs/cfa-program/exam", "label": {"en": "CFA Institute, CFA® exam information (length, format, results)"}},
+  "cfp_registration": {"url": "https://www.cfp.net/get-certified/certification-process/exam-requirement/registration/upcoming-exam-dates-and-registration-process", "label": {"en": "CFP Board, upcoming CFP® exam dates and registration process"}},
+  "cfp_final": {"url": "https://cfp.net/get-certified/certification-process/final-steps", "label": {"en": "CFP Board, final steps to CFP® certification (application and certification fees)"}},
+  "cfp_stats": {"url": "https://www.cfp.net/-/media/files/cfp-board/why-and-get-certified/cfp-board-historical-exam-stats-july-2026.pdf", "label": {"en": "CFP Board, historical CFP® exam statistics through July 2026 (PDF)"}},
+  "cfp_experience": {"url": "https://www.cfp.net/get-certified/certification-process/experience-requirement", "label": {"en": "CFP Board, CFP® certification experience requirement"}},
+  "cfp_renewal": {"url": "https://www.cfp.net/for-cfp-pros/continuing-education/renewal/renewal-policies", "label": {"en": "CFP Board, CFP® certification renewal policies"}},
+  "cfp_marks": {"url": "https://www.cfp.net/for-cfp-pros/market-yourself/how-to-use-the-cfp-marks", "label": {"en": "CFP Board, how to use the CFP® marks"}},
+  "aicpa_rates": {"url": "https://www.aicpa-cima.com/resources/article/learn-more-about-cpa-exam-scoring-and-pass-rates", "label": {"en": "AICPA & CIMA, CPA Exam scoring and pass rates (linked only: no figure reproduced)"}},
+  "aicpa_exam": {"url": "https://www.aicpa-cima.com/resources/toolkit/cpa-exam", "label": {"en": "AICPA & CIMA, everything you need to know about the CPA Exam"}},
+  "va_boa": {"url": "https://boa.virginia.gov/cpa-exam/fees/", "label": {"en": "Virginia Board of Accountancy, CPA exam fees"}},
+  "ca_cbt": {"url": "https://www.cba.ca.gov/cbt_public/CBT_Instructions", "label": {"en": "California Board of Accountancy, CPA exam application instructions"}},
+  "ca_ab1175": {"url": "https://www.cba.ca.gov/cba/communications-and-outreach/news/nr_2026-03-22.pdf", "label": {"en": "California Board of Accountancy, news release of 23 March 2026 (AB 1175)"}},
+  "ny_120": {"url": "https://www.op.nysed.gov/professions/certified-public-accountants/initial1202year", "label": {"en": "NYSED Office of the Professions, CPA license: 120 semester hours and 2 years of experience"}},
+  "ny_150": {"url": "https://www.op.nysed.gov/professions/certified-public-accountants/initial-license-requirements", "label": {"en": "NYSED Office of the Professions, CPA license requirements (150-hour pathway)"}},
+  "tx_cert": {"url": "https://www.tsbpa.texas.gov/candidates/certification/", "label": {"en": "Texas State Board of Public Accountancy, CPA certification (Pathways A and B)"}},
+  "tx_elig": {"url": "https://www.tsbpa.texas.gov/candidates/eligibility-application/", "label": {"en": "Texas State Board of Public Accountancy, eligibility application"}},
+  "fl_306": {"url": "https://www.flsenate.gov/Laws/Statutes/2025/473.306", "label": {"en": "Florida Statutes, section 473.306 (examinations)"}},
+  "fl_308": {"url": "https://www.flsenate.gov/Laws/Statutes/2025/473.308", "label": {"en": "Florida Statutes, section 473.308 (licensure)"}},
+  "fl_sb364": {"url": "https://www.flsenate.gov/Session/Bill/2026/364", "label": {"en": "Florida Senate, SB 364 (2026), public accountancy: bill history"}},
+  "pa_snapshot": {"url": "https://www.pa.gov/agencies/dos/department-and-offices/bpoa/boards-commissions/accountancy-board/cpa-snapshot", "label": {"en": "Pennsylvania State Board of Accountancy, CPA licensure requirements snapshot"}},
+  "irs_become": {"url": "https://www.irs.gov/tax-professionals/enrolled-agents/become-an-enrolled-agent", "label": {"en": "IRS, become an enrolled agent"}},
+  "irs_faq": {"url": "https://www.irs.gov/tax-professionals/enrolled-agents/enrolled-agents-frequently-asked-questions", "label": {"en": "IRS, enrolled agents frequently asked questions (SEE fee and enrollment)"}},
+  "irs_maintain": {"url": "https://www.irs.gov/tax-professionals/enrolled-agents/maintain-your-enrolled-agent-status", "label": {"en": "IRS, maintain your enrolled agent status"}},
+  "irs_ptin": {"url": "https://www.irs.gov/tax-professionals/ptin-requirements-for-tax-return-preparers", "label": {"en": "IRS, PTIN requirements for tax return preparers"}},
+  "fr_see": {"url": "https://www.federalregister.gov/documents/2026/04/20/2026-07681/enrolled-agent-special-enrollment-examination-user-fee-update", "label": {"en": "Federal Register, document 2026-07681: enrolled agent SEE user fee update (20 April 2026)"}},
+  "iia_cia": {"url": "https://www.theiia.org/en/certifications/cia/", "label": {"en": "The IIA, Certified Internal Auditor (CIA) program and 2026 fees"}},
+  "iia_2027": {"url": "https://www.theiia.org/en/certifications/new-to-certification/Pricing/2027/", "label": {"en": "The IIA, certification pricing for 2027"}},
+  "garp_fees": {"url": "https://www.garp.org/frm/fees-payments", "label": {"en": "GARP, FRM® exam fees and payments"}}
+ }
+}

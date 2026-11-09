@@ -1,0 +1,53 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { route } from '../../i18n/routes';
+import { breadcrumbSchema, articleSchema } from '../../lib/seo';
+import { displayDate } from '../../lib/format';
+import { P, type SourceKey } from '../../lib/engine/params';
+import { helpers } from '../../lib/helpers';
+const lang = 'en';
+const h = helpers(true);
+const { E, m, m2, pc } = h;
+const L = (k: SourceKey, t?: string) => `<a href="${P.sources[k].url}" target="_blank" rel="nofollow noopener">${t ?? P.sources[k].label.en}</a>`;
+const l1 = E.cfaRate('l1', 'tenYear');
+const s = E.cfpLatest(); const p1 = E.cfpRate(s, 'first'), pr = E.cfpRate(s, 'repeat');
+---
+<PageLayout title="Finance Cert Cost Method: Fees, Pass Rates, Retakes, Limits" description="How Finance Cert Cost turns official fees and published pass rates into expected totals for the CPA, CFA®, CFP®, EA, CIA and FRM®, and what it leaves out." lang={lang} jsonLd={[articleSchema({ title: 'How the totals are built', description: 'Method of Finance Cert Cost', path: route('method', lang), lang }), breadcrumbSchema([{ name: 'Home', path: route('home', lang) }, { name: 'Method', path: route('method', lang) }])]} breadcrumbs={[{ label: 'Method' }]}>
+  <header class="mb-6"><p class="kicker">Method</p><h1 class="mt-1 text-3xl font-bold text-navy-900 md:text-4xl">How the totals are built</h1></header>
+  <div class="prose prose-slate max-w-none">
+    <p>Every calculator calls one engine of pure functions, fed by one parameter file of fees, rules and pass rates. No amount is typed into a page. Each value was read by hand on the official page named in the file, on {displayDate(P.retrieved_at, 'en-US')}. Updates are made by hand when a body publishes new figures; nothing is fetched automatically and no update schedule is promised.</p>
+
+    <h2>Expected sittings</h2>
+    <p>If a candidate passes an exam with probability p at each attempt, independently, the number of attempts until a pass follows a geometric distribution with mean 1 ÷ p, and the chance of having passed within n attempts is 1 − (1 − p)<sup>n</sup>. Example: CFA® Level I, ten-year pass rate {pc(l1)} (<Fragment set:html={L('cfa_results')} />), gives {h.num1(1 / l1)} sittings on average.</p>
+    <p>CFP Board publishes first-time and repeat pass rates separately (<Fragment set:html={L('cfp_stats')} />). The first attempt passes with p<sub>1</sub>; after a fail, each attempt passes with p<sub>r</sub>. Expected sittings = 1 + (1 − p<sub>1</sub>) ÷ p<sub>r</sub>. {h.ml(s.w)}: 1 + (1 − {pc(p1)}) ÷ {pc(pr)} = {h.num1(E.expectedSittings2(p1, pr))}.</p>
+    <p>Expected exam fees = fee × expected sittings, for each exam, summed. Rates are pooled as total passed ÷ total sat over the sessions chosen, so a large session weighs more than a small one. A rate of zero would give no finite answer; none of the published rates is zero.</p>
+
+    <h2>CPA: no pass rate used</h2>
+    <p>The AICPA publishes cumulative pass rates for each CPA section (<Fragment set:html={L('aicpa_rates', 'AICPA & CIMA, CPA Exam scoring and pass rates')} />), but its terms of use limit its material to personal, non-commercial use. Since {h.date('2026-11-08')} this site copies none of them and links to the page instead; the pass-rate figures it showed before that date were removed from every page, calculator and data file. CPA totals are built without any rate: four sections at {m2(P.cpa.sectionFee)} each, {m(4 * P.cpa.sectionFee)} if all pass the first time, which is the one CPA figure used across the site, plus the number of section retakes the reader types. Each retake costs the section fee again, plus the board fee charged for a new try where one was read: {m(P.cpa.states.CA.examRepeat!)} for a California repeat application (one per retake, an estimate) and {m(P.cpa.states.TX.perSection)} for the Texas eligibility fee of each section. Until the reader types a number of retakes, the result is marked as an example. The pass-rate page has a tool where the reader types the rate read on the AICPA’s page; its default of 45% is an example, not an AICPA figure.</p>
+
+    <h2>Fees used</h2>
+    <ul>
+      <li>CFA® Program: early and standard registration fees for each level from {P.cfa.newPricingFrom} (<Fragment set:html={L('cfa_pricing')} />); no enrollment fee since {h.date(P.cfa.enrollmentRemoved)}.</li>
+      <li>CPA: {m2(P.cpa.sectionFee)} per section as of {h.date(P.cpa.sectionFeeFrom)} (<Fragment set:html={L('va_boa')} />); board fees only where read on the board’s site or statute; the structure of the exam, three Core sections and one Discipline of {P.cpa.sectionHours} hours each, from <Fragment set:html={L('aicpa_exam')} />.</li>
+      <li>CFP®: exam {m(P.cfp.exam.early)}, {m(P.cfp.exam.standard)}, {m(P.cfp.exam.late)}; application {m(P.cfp.application)}; annual fee {m(P.cfp.annual)} (<Fragment set:html={L('cfp_registration')} />, <Fragment set:html={L('cfp_final')} />).</li>
+      <li>Enrolled agent: {m(P.ea.perPart)} per SEE part, of which {m(P.ea.irsUserFee)} IRS user fee; Form 23 {m(P.ea.enrollment)}; PTIN {m2(P.ea.ptin)} (<Fragment set:html={L('irs_faq')} />, <Fragment set:html={L('fr_see')} />, <Fragment set:html={L('irs_ptin')} />).</li>
+      <li>CIA: member and non-member prices for 2026 and from {h.date(P.cia.y2027.from)} (<Fragment set:html={L('iia_cia')} />, <Fragment set:html={L('iia_2027')} />). FRM®: {m(P.frm.enrollment)} enrollment, {m(P.frm.early)} or {m(P.frm.standard)} per part (<Fragment set:html={L('garp_fees')} />).</li>
+    </ul>
+
+    <h2>Licensure routes</h2>
+    <p>For each state the engine holds the routes the board or the statute describes, with their hours, years of experience and the dates they open or close. A route fits when it is in force on the application date chosen and the hours and years typed reach its thresholds. Course content rules (accounting and business hours), age and character requirements are described on the state pages but not checked by the tool.</p>
+
+    <h2>Tests</h2>
+    <p>Run on every build: expected sittings for p = ½ and for the CFP® two-rate formula recomputed by hand; the CFA® first-try total equal to the {m(P.cfa.programTotal.low)} to {m(P.cfa.programTotal.high)} range stated by CFA Institute; the four-section CPA price and one retake at the section fee plus the Texas board fee; the CPA routes of New York and California before and after their dates; the EA, CIA and FRM® totals. A failing test stops the build.</p>
+
+    <h2>What is left out</h2>
+    <ul>
+      <li>review course, book and practice exam prices, which the reader types;</li>
+      <li>CFA Institute and society dues (typed), the CFP® education program (typed);</li>
+      <li>fees not confirmed on an official page: California license fees, Florida board fees, the Texas application of intent, the New York and Pennsylvania exam application fees;</li>
+      <li>pass rates for the SEE, the CIA and the FRM®, which were not read, and the AICPA’s CPA pass rates, which are linked but not copied; retakes there are typed;</li>
+      <li>travel, time off work, rescheduling, and the earnings a credential may bring.</li>
+    </ul>
+    <p>The pass rates used, those of CFA Institute and CFP Board, are facts reported by each body, linked to their source. No chart, table layout or text of theirs is reproduced. The AICPA’s terms restrict reuse of its material to personal, non-commercial use, so no AICPA pass rate is shown: its page is linked only.</p>
+  </div>
+</PageLayout>
