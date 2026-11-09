@@ -36,7 +36,7 @@ export default definePage({
 ${h.table(['Fee', 'Member, 2026', 'Non-member, 2026', `Member, from ${h.date(b.from)}`, `Non-member, from ${h.date(b.from)}`], rows, `${h.src('iia_cia', 'The IIA, CIA program')} and ${h.src('iia_2027', 'certification pricing for 2027')}, read on ${h.read}.`, ['l', 'r', 'r', 'r', 'r'])}
 <p>The change of ${h.date(b.from)} raises every member price and every non-member exam part, but lowers the non-member application from ${h.m(a.application[1])} to ${h.m(b.application[1])}.</p>
 
-<h2>Retakes</h2>
+<h2>What retakes add to the exam cost</h2>
 <p>Each part retaken is paid again. The calculator values a retake at the average of the three part fees in the price list you chose, since you may not know in advance which part you will need to retake. We could not read part-by-part pass rates on The IIA’s pages, so the calculator does not assume any; type the number of retakes you want to plan for.</p>
 
 <h2>What the CIA covers</h2>

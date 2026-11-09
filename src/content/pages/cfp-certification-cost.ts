@@ -38,7 +38,7 @@ ${h.table(['Registration', 'Exam fee', 'Expected exam fees', 'Application', 'To 
 <h2>Retakes, from CFP Board’s own figures</h2>
 <p>CFP Board’s ${h.src('cfp_stats', 'historical exam statistics')} split each session into first-time and repeat candidates. Repeat candidates pass less often, so a model with a single rate understates retakes. The calculator uses both: the first attempt at the first-time rate, any further attempt at the repeat rate. With the latest rates, an average candidate sits the exam about one and a half times: once, plus half a retake on average. Choose “Sessions since March 2023” to smooth out one unusual session.</p>
 
-<h2>The education requirement is the big line</h2>
+<h2>Education, the big line in the certification cost</h2>
 <p>CFP Board’s education requirement has two parts: a bachelor’s degree and CFP Board coursework, taken through a registered program. Programs are run by universities and private providers at prices CFP Board does not set, so no amount is loaded: type yours. Once education, exam, experience and ethics are all met, CFP Board asks for the application fee and the first certification fee within six months.</p>
 ${h.box('About the first year’s fee', '<p>CFP Board prorates the first certification fee according to when you certify. The calculator counts a full year for each year you choose, which keeps the total on the safe side.</p>', 'info')}
 

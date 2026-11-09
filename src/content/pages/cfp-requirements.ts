@@ -30,7 +30,7 @@ export default definePage({
     const X = h.P.cfp.experience;
     const paces = [20, 30, 40, 50].map((w) => [`${w} hours a week`, h.num1(h.E.monthsForHours(X.standard, w) / 12), h.num1(h.E.monthsForHours(X.apprenticeship, w) / 12)]);
     return `
-<h2>The four requirements</h2>
+<h2>The four certification requirements</h2>
 <ol>
 <li><strong>Education.</strong> A bachelor’s degree and CFP Board coursework, according to CFP Board’s ${h.src('cfp_final', 'final steps page')}.</li>
 <li><strong>Examination.</strong> The CFP® exam, in one of three windows a year. See ${h.a('cfp-exam-dates', 'exam dates')} and ${h.a('cfp-pass-rate', 'pass rates')}.</li>

@@ -36,7 +36,7 @@ export default definePage({
 ${h.table(['Window', 'Part I', 'Part II', 'Early registration', 'Standard registration'], rows, `${h.src('garp_fees', 'GARP, FRM® exam fees and payments')}, read on ${h.read}. Each deadline is the last one before the window.`, ['l', 'l', 'l', 'l', 'l'])}
 <p>The difference between early and standard is ${h.m(F.standard - F.early)} per part. Over two parts, registering early saves ${h.m(2 * (F.standard - F.early))}.</p>
 
-<h2>Totals with retakes</h2>
+<h2>Exam cost totals with retakes</h2>
 ${h.table(['Plan', 'Early registration', 'Standard registration'], ret, 'Enrollment plus two parts plus retakes at the same registration price.', ['l', 'r', 'r'])}
 <p>Retakes are valued at the same price as the first sitting. GARP’s pass rates were not read for this site, so the calculator does not infer a number of retakes from them.</p>
 
