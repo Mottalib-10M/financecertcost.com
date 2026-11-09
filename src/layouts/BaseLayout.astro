@@ -164,13 +164,16 @@ const crumbAside = Astro.slots.has('crumb-aside') ? (await Astro.slots.render('c
     <footer class="mt-16 border-t border-navy-200 bg-navy-50">
       <div class="mx-auto max-w-6xl px-4 py-12">
         {/* Page list folded on a phone (4th naive round: “5 screens of footer on every page”); open from md up. */}
+        {/* Final naive round (2026-11-09): on a phone the whole footer is one short block; the page list and the legal
+             notices open together under one link (still in the HTML), and are always open from md up. */}
         <input type="checkbox" id="footer-plan" class="peer sr-only" />
-        <label for="footer-plan" class="block cursor-pointer text-sm font-semibold text-accent-700 underline underline-offset-2 md:hidden">All pages of the site ▾</label>
+        <p class="text-sm text-navy-600 md:hidden">&copy; {new Date().getFullYear()} {SITE_NAMES[lang]} · {ui.footerBrowser}</p>
+        <label for="footer-plan" class="mt-2 block cursor-pointer text-sm font-semibold text-accent-700 underline underline-offset-2 md:hidden">All pages and legal notices ▾</label>
         <div class="mt-4 hidden grid-cols-2 gap-8 peer-checked:grid md:mt-0 md:grid md:grid-cols-4">
           {footerCols.map((col) => (<div><h2 class="mb-3 text-sm font-semibold text-navy-900">{col.label}</h2><ul class="space-y-2 text-sm text-navy-600">{col.links.map((l) => <li><a href={l.href} class="hover:text-navy-900">{l.label}</a></li>)}</ul></div>))}
         </div>
         {popular.length > 0 && (<div class="mt-8 border-t border-navy-200 pt-6"><h2 class="mb-2 text-sm font-semibold text-navy-900">{ui.footerPopular}</h2><p class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-navy-600">{popular.map((p) => <a href={p.href} class="hover:text-navy-900">{p.label}</a>)}</p></div>)}
-        <div class="mt-8 border-t border-navy-200 pt-8">
+        <div class="mt-8 hidden border-t border-navy-200 pt-8 peer-checked:block md:block">
           <div class="flex flex-col items-center gap-2 text-center text-sm text-navy-500">
             <p><span class="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-0.5 text-xs font-medium text-green-700"><span class="inline-block h-1.5 w-1.5 rounded-full bg-green-500" aria-hidden="true"></span>{ui.footerValidated} · {YEAR}</span></p>
             <p>{ui.footerBrowser}</p>

@@ -43,6 +43,7 @@ for (let i = 0; i < parts.length; i += 3) { chunks.push({ html: parts[i] }); if 
       <p class="mt-2 text-base text-navy-700 sm:text-lg">{page.intro}</p>
       <p class="mt-1 text-xs text-navy-600">Independent site: not run by, or affiliated with, any body that sets these exams or charges these fees.</p>
     </header>
+    {page.avantOutil && <p class="mb-3 rounded-md border-l-4 border-accent-600 bg-accent-50 px-3 py-1 text-sm font-semibold text-navy-900 [&_a]:text-accent-700 [&_a]:underline" set:html={page.avantOutil(h)} />}
     {page.tool && <div data-outil class="mb-4"><Tool tool={page.tool} primary={true} /></div>}
     <Clamp text={page.resume(h)} id={`clamp-${page.id}`} lang={lang} class="mb-3" />
     {page.mini && <div class="mb-4"><Tool tool={page.mini} idPrefix="g" /></div>}

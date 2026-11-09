@@ -28,7 +28,7 @@ const prepAlert = (n: number, what = 'these exam fees') => (n > 0 ? undefined : 
 /** “Sitting” and decimals, said where the figure is (2nd round: “7.5 sittings? Nobody sits half an exam”). */
 const ATTEMPT_NOTE = 'A try is one sitting of one exam; a figure such as 2.47 is an average over all candidates, about 2 to 3 tries.';
 /** Extra attempts in a label: two decimals so the line adds up ($445 = 0.54 × $825), then the same in words. */
-const extraLabel = (e: number) => `Expected retakes (${n2(e)} extra try on average: ${retakesInWords(e)})`;
+const extraLabel = (e: number) => `Expected retakes: ${retakesInWords(e)} (${n2(e)} extra try on average)`;
 const money = (id: string, label: string, def: number, help?: string) => ({ id, label, def, unit: '$', max: 1_000_000, help });
 const opt = (labels: string[]) => labels.map((label, i) => ({ value: String(i), label }));
 const TIMING = opt(['Early registration', 'Standard registration']);
@@ -60,10 +60,14 @@ const APPLY = opt(['Before Nov 21, 2026', 'Nov 21 to Dec 31, 2026', 'Jan 1 to Ju
 /** The application date changes the routes only in New York and California (Texas Pathway B is open since August 1, 2026). */
 const DATED = new Set<E.StateCode>(['NY', 'CA']);
 /** Each choice says what the credential is, not only its letters (3rd round), within 26 characters. */
+/** Plain-words name of each credential, in the order of CERTS (final round, 61-year-old tester: “I do not know these letters”). */
+const PLAIN = ['CPA: licensed accountant', 'CFA®: investment analyst', 'CFP®: financial planner for families', 'Enrolled agent: tax preparer approved by the IRS', 'CIA: internal auditor', 'FRM®: risk manager'];
 const CERTS = opt(['CPA, accountant (4 exams)', 'CFA®, investment (3 exams)', 'CFP®, financial planner', 'Enrolled agent, tax (IRS)', 'CIA, internal auditor', 'FRM®, risk manager']);
-/** Home comparator default: the CFA® Program, whose retakes are counted from published pass rates, so the first figure
- *  keeps the title's promise “retakes included” (4th round: “you promise retakes, then show $1,074 without any”). */
-export const HOME_CERT = 1;
+/** Home comparator default: the CPA with one section retaken, so the first figure counts a retake (4th round: “you promise
+ *  retakes, then show $1,074 without any”) without opening on the dearest credential (final round: “first figure I see:
+ *  $7,800, I think it is the price of any finance credential”). The quiz above it is the first tool of the page. */
+export const HOME_CERT = 0;
+export const HOME_RETAKES = 1;
 
 /** Beginner path (4th round, all three testers: “no way in for someone who starts from zero”). What each credential is
  *  and needs, in the words of the home page; every fact is stated with its source on the credential's own page. */
@@ -77,7 +81,7 @@ const START = [
   { id: 'cia-exam', path: '/en/cia-exam-cost/', name: 'CIA, Certified Internal Auditor', short: 'CIA', what: 'The designation for internal auditors, from The Institute of Internal Auditors (The IIA).', need: ['Program requirements are set by The IIA: check them on its site.', 'Program requirements are set by The IIA: check them on its site.', 'Program requirements are set by The IIA: check them on its site.'] },
   { id: 'frm-exam', path: '/en/frm-exam-cost/', name: 'FRM®, Financial Risk Manager', short: 'FRM®', what: 'A risk management designation from GARP, the Global Association of Risk Professionals.', need: ['A work-experience requirement is set by GARP: check it on its site.', 'A work-experience requirement is set by GARP: check it on its site.', 'A work-experience requirement is set by GARP: check it on its site.'] },
 ];
-/** Work → credential: accounting CPA, tax EA, investments CFA®, planning CFP®, internal audit CIA, risk FRM®; “not sure” → EA, the only one with no education-hour rule. */
+/** Work → credential: accounting CPA, tax EA, investments CFA®, planning CFP®, internal audit CIA, risk FRM®; “not sure” lists all six (index unused). */
 const WORK_TO = [0, 1, 2, 3, 4, 5, 1];
 
 const SPECS: Record<string, MiniSpec> = {
@@ -89,8 +93,9 @@ const SPECS: Record<string, MiniSpec> = {
     inputs: [
       { id: 'cert', label: 'Which certification?', def: HOME_CERT, options: CERTS, help: 'Tap to change: CPA (accountant), CFA® (investment analyst), CFP® (financial planner), enrolled agent (tax preparer for the IRS), CIA (internal auditor) or FRM® (risk manager).' },
       { id: 'timing', label: 'When you register', def: 0, options: TIMING, help: 'Registering early costs less for this certification.', showIf: (v) => [1, 2, 5].includes(Math.round(v.cert)) },
-      cpaRetakeField(`Each section you retake costs ${m2(P.cpa.sectionFee)} again. 0 means all four passed the first time.`, (v) => Math.round(v.cert) === 0),
-      money('prep', 'Review course and books, total', 0, 'Not sure? Ask the course provider for its full price, including any retake material, and type it here. No course price is loaded.'),
+      { ...cpaRetakeField(`Each section you retake costs ${m2(P.cpa.sectionFee)} again. 0 means all four passed the first time.`, (v) => Math.round(v.cert) === 0), def: HOME_RETAKES },
+      // One meaning for every credential here: a total, added once (final round: “total” here, “per sitting” on the CFA® page).
+      money('prep', 'Review course and books, your total for all the exams', 0, 'Your full price for the whole credential, retakes included; it is added once. No course price is loaded.'),
       { id: 'years', label: 'Years of yearly fees to count, after you qualify', def: 0, unit: 'yrs', max: 40, help: `CFP®: ${m(P.cfp.annual)} a year once certified. EA: the tax preparer ID (PTIN), ${m2(P.ea.ptin)} a year; the first year is always counted.`, showIf: (v) => [2, 3].includes(Math.round(v.cert)) },
     ],
     run: (v, touched = {}) => {
@@ -98,33 +103,33 @@ const SPECS: Record<string, MiniSpec> = {
       if (c === 1) {
         const r = E.cfaTotal({ window: w, rateBasis: 'tenYear', prepPerLevel: 0, duesPerYear: 0, duesYears: 0 });
         const n = r.rows.reduce((a, x) => a + x.sittings, 0);
-        return { head: [`Expected cost of the three CFA® exams, retakes included`, m(r.exams + v.prep)], alert: prepAlert(v.prep), rows: [['Three exams, all passed the first time', m(r.firstTry)], ['Expected retakes (average pass rates of the last ten years)', rest(r.exams, r.firstTry)], prepRow(v.prep), ['Membership fees once you hold the title', 'not counted']], note: `Assumes ${w === 'early' ? 'early' : 'standard'} registration. An average candidate sits ${tw(n).replace(/ tries$/, '')} exams in total for the three levels (${n2(n)} on average), against 3 for someone who never fails.` };
+        return { head: [`Expected cost of the three CFA® exams, retakes included`, m(r.exams + v.prep)], alert: prepAlert(v.prep), rows: [['Three exams, all passed the first time', m(r.firstTry)], ['Expected retakes (average pass rates of the last ten years)', rest(r.exams, r.firstTry)], prepRow(v.prep, 'Your review course and books, total'), ['Yearly CFA Institute membership, once you qualify', 'not counted']], note: `Assumes ${w === 'early' ? 'early' : 'standard'} registration. An average candidate sits ${tw(n).replace(/ tries$/, '')} exams in total for the three levels, against 3 for someone who never fails.`, exemple: ['Example: CFA®, early registration, average retakes', 'change any figure to fit yours'] };
       }
       if (c === 2) {
         const t = (['early', 'standard'] as const)[v.timing === 1 ? 1 : 0];
         const r = E.cfpTotal({ window: t, education: 0, prep: v.prep, years, basis: 'latest' });
         const head = years > 0 ? `Expected CFP® cost, with ${formatNumber(years, 0)} certified year${years > 1 ? 's' : ''}${noPrep(v.prep)}` : `Expected cost to get CFP® certified${noPrep(v.prep)}`;
-        return { head: [head, m(r.total)], alert: prepAlert(v.prep), rows: [['Exam, passed the first time', m(r.fee)], [extraLabel(r.sittings - 1), rest(r.exams, r.fee)], ['Application to CFP Board', m(P.cfp.application)], years > 0 ? [`Yearly certification fee × ${formatNumber(years, 0)}`, m(P.cfp.annual * years)] : ['Yearly certification fee, once certified', `${m(P.cfp.annual)} a year, not counted`], prepRow(v.prep)], note: `Assumes ${t === 'early' ? 'early bird' : 'standard'} registration and the latest pass rates. A bachelor’s degree and CFP Board coursework are required; the school’s price is not included: add it on the CFP® page.` };
+        return { exemple: ['Example: CFP®, early registration, average retakes', 'change any figure to fit yours'], head: [head, m(r.total)], alert: prepAlert(v.prep), rows: [['Exam, passed the first time', m(r.fee)], [extraLabel(r.sittings - 1), rest(r.exams, r.fee)], ['Application to CFP Board', m(P.cfp.application)], years > 0 ? [`Yearly certification fee × ${formatNumber(years, 0)}`, m(P.cfp.annual * years)] : ['Yearly certification fee, once certified', `${m(P.cfp.annual)} a year, not counted`], prepRow(v.prep)], note: `Assumes ${t === 'early' ? 'early' : 'standard'} registration and the latest pass rates. A bachelor’s degree and CFP Board coursework are required; the school’s price is not included: add it on the CFP® page.` };
       }
       if (c === 3) {
         const r = E.eaTotal({ sittings: 3, prep: v.prep, years });
         const y = Math.max(1, years);
-        return { head: [`Enrolled agent fees, first-try price only${noPrep(v.prep)}`, m(r.total)], alert: prepAlert(v.prep), rows: [['IRS exam, three parts', m(r.exams)], ['Enrollment with the IRS', m(r.enrollment)], [`Tax preparer ID, ${m2(P.ea.ptin)} a year × ${formatNumber(y, 0)}`, m(r.ptin)], prepRow(v.prep)], note: `First-try price only: the IRS publishes no pass rate, so no retake is counted, unlike the CFA® and CFP® figures. Each retake adds ${m(P.ea.perPart)} for the part; the enrolled agent page counts them.` };
+        return { exemple: ['Example: enrolled agent, every part passed the first time', 'change any figure to fit yours'], head: [`Enrolled agent fees, first-try price only${noPrep(v.prep)}`, m(r.total)], alert: prepAlert(v.prep), rows: [['IRS exam, three parts', m(r.exams)], ['Enrollment with the IRS', m(r.enrollment)], [`Tax preparer ID, ${m2(P.ea.ptin)} a year × ${formatNumber(y, 0)}`, m(r.ptin)], prepRow(v.prep)], note: `First-try price only: the IRS publishes no pass rate, so no retake is counted, unlike the CFA® and CFP® figures. Each retake adds ${m(P.ea.perPart)} for the part; the enrolled agent page counts them.` };
       }
       if (c === 4) {
         const r = E.ciaTotal({ member: false, year: '2026', extraSittings: 0, prep: v.prep });
         const mem = E.ciaTotal({ member: true, year: '2026', extraSittings: 0, prep: 0 });
-        return { head: [`CIA fees, first-try price only, non-member${noPrep(v.prep)}`, m(r.total)], alert: prepAlert(v.prep), rows: [['Application', m(r.application)], ['Three parts, passed the first time', m(r.exams)], prepRow(v.prep)], note: `Members of The IIA (Institute of Internal Auditors) pay ${m(mem.total)} instead. First-try price only: no pass rate was found, so no retake is counted, unlike the CFA® and CFP® figures. Each retake adds about ${m(r.exams / 3)}. 2026 prices; new prices start on ${dd(P.cia.y2027.from)}: see the CIA page.` };
+        return { exemple: ['Example: CIA, non-member, every part passed the first time', 'change any figure to fit yours'], head: [`CIA fees, first-try price only, non-member${noPrep(v.prep)}`, m(r.total)], alert: prepAlert(v.prep), rows: [['Application', m(r.application)], ['Three parts, passed the first time', m(r.exams)], prepRow(v.prep)], note: `Members of The IIA (Institute of Internal Auditors) pay ${m(mem.total)} instead. First-try price only: no pass rate was found, so no retake is counted, unlike the CFA® and CFP® figures. Each retake adds about ${m(r.exams / 3)}. 2026 prices; new prices start on ${dd(P.cia.y2027.from)}: see the CIA page.` };
       }
       if (c === 5) {
         const r = E.frmTotal({ window: w, extraSittings: 0, prep: v.prep });
-        return { head: [`FRM® fees, first-try price only${noPrep(v.prep)}`, m(r.total)], alert: prepAlert(v.prep), rows: [['One-time enrollment', m(r.enrollment)], ['Part I and Part II, passed the first time', m(r.exams)], prepRow(v.prep)], note: `First-try price only: no pass rate was read, so no retake is counted, unlike the CFA® and CFP® figures. Each retake adds ${m(r.fee)}; the FRM® page counts them.` };
+        return { exemple: ['Example: FRM®, early registration, both parts passed the first time', 'change any figure to fit yours'], head: [`FRM® fees, first-try price only${noPrep(v.prep)}`, m(r.total)], alert: prepAlert(v.prep), rows: [['One-time enrollment', m(r.enrollment)], ['Part I and Part II, passed the first time', m(r.exams)], prepRow(v.prep)], note: `First-try price only: no pass rate was read, so no retake is counted, unlike the CFA® and CFP® figures. Each retake adds ${m(r.fee)}; the FRM® page counts them.` };
       }
       const a = E.cpaTotal({ state: null, retakes: v.retakes, prep: v.prep });
       const example = !touched.retakes;
-      // One example mention only (report of 2026-11-08): « Example, not your result yet » is MentionExemple's; the head says what is left out.
-      const head = example ? `No retake counted yet: CPA exam fees if all four sections pass the first time${noPrep(v.prep)}` : `CPA exam fees with ${retakesLabel(a.retakes)}${noPrep(v.prep)}`;
-      return { head: [head, fm(sumShown(a.firstTryExams, a.retakeExams, v.prep), 0)], alert: prepAlert(v.prep), rows: [[`Four sections, ${m2(P.cpa.sectionFee)} each`, m(a.firstTryExams)], [`Retakes you expect: ${formatNumber(a.retakes, 0)} × ${m2(P.cpa.sectionFee)}`, a.retakes ? m(a.retakeExams) : 'none typed'], prepRow(v.prep), ['Fees of your state’s accountancy board', 'not counted: they vary by state']], note: `${example ? `Each section you retake adds ${m2(P.cpa.sectionFee)}: one retake brings the fees to ${m(a.firstTryExams + P.cpa.sectionFee)}, two to ${m(a.firstTryExams + 2 * P.cpa.sectionFee)}. ` : ''}${CPA_RATES_NOTE}` };
+      // The head names the retakes counted; the mention says the one retake is an example (final round).
+      const head = a.retakes ? `CPA exam fees with ${retakesLabel(a.retakes)}${noPrep(v.prep)}` : `CPA exam fees, all four sections passed the first time${noPrep(v.prep)}`;
+      return { head: [head, fm(sumShown(a.firstTryExams, a.retakeExams, v.prep), 0)], alert: prepAlert(v.prep), rows: [[`Four sections, ${m2(P.cpa.sectionFee)} each`, m(a.firstTryExams)], [`Retakes you expect: ${formatNumber(a.retakes, 0)} × ${m2(P.cpa.sectionFee)}`, a.retakes ? m(a.retakeExams) : 'none typed'], prepRow(v.prep, 'Your review course and books, total'), ['Fees of your state’s accountancy board', 'not counted: they vary by state']], note: `${example ? `One retake is only an example: type the number you expect. With none the fees are ${m(a.firstTryExams)}; with two, ${m(a.firstTryExams + 2 * P.cpa.sectionFee)}. ` : ''}${CPA_RATES_NOTE}`, exemple: [`Example: CPA, ${retakesLabel(a.retakes)}, no review course`, 'change any figure to fit yours'] };
     },
   },
 
@@ -154,11 +159,23 @@ const SPECS: Record<string, MiniSpec> = {
         `${m(P.frm.early)} for each part retaken`,
       ][k];
       const unsure = Math.round(v.work) === 6;
+      if (unsure) {
+        // Not sure yet: the six side by side, cheapest first, each named in plain words; no credential picked for the
+        // reader (final round: “I answered nothing and it recommends the enrolled agent”).
+        const firsts = [fl.cpa[0], fl.cfa[0], fl.cfp[0], fl.ea[0], fl.cia[1], fl.frm[0]];
+        const six = PLAIN.map((name, i) => ({ name, x: firsts[i] })).sort((a, b) => a.x - b.x);
+        return {
+          head: ['Six credentials: exam fees at the first try', `${m(six[0].x)} to ${m(six[5].x)}`],
+          alert: `Failed exams are paid again: with the usual retakes the CFA® comes to about ${m(cfa.exams)}. The table below adds the retakes for all six.`,
+          rows: six.map((c) => [c.name, m(c.x)] as [string, string]),
+          note: d === 0 ? 'Without a college degree, the enrolled agent is the one credential here with no education-hour rule; the CPA and the CFP® ask for a degree first. Pick the work you want above to see what each one needs.' : 'Pick the work you want above to see what that credential needs first and what a retake adds.',
+          go: ['Compare all six with retakes ↓', '#compare-title'],
+          exemple: ['Not sure yet: all six shown, cheapest first', 'pick the work you want above'],
+        };
+      }
       const blocked = (k === 0 || k === 3) && d === 0;
       const rows: Array<[string, string]> = [['What it is', c.what], ['With your studies', c.need[d]], [k === 2 || k === 3 ? 'With retakes' : 'If you retake', retake]];
-      const note = unsure
-        ? 'Not sure yet: the enrolled agent is shown because it is the one credential here with no education-hour rule. Change the first answer to see the others.'
-        : blocked ? `No degree yet? The enrolled agent exam has no education-hour rule: ${m(fl.ea[0])} at the first try.` : 'Fees only: review courses, and for the CFP® the school program, come on top.';
+      const note = blocked ? `No degree yet? The enrolled agent exam has no education-hour rule: ${m(fl.ea[0])} at the first try.` : 'Fees only: review courses, and for the CFP® the school program, come on top.';
       return { head: [`${c.name}: exam fees at the first try`, m(first)], rows, note, go: [`See the full ${c.short} cost, step by step`, c.path] };
     },
   },
@@ -178,7 +195,7 @@ const SPECS: Record<string, MiniSpec> = {
       const r = E.cfaTotal({ window: win(v.timing), rateBasis: cfaBasis(v.basis), prepPerLevel: v.prep, duesPerYear: v.dues, duesYears: v.dues > 0 ? v.years : 0 });
       const b = Math.max(0, Math.min(2, Math.round(v.basis)));
       const total = sumShown(...r.rows.map((x) => x.examCost), r.prep, r.dues);
-      return { head: [`Expected cost of the three CFA® exams${noPrep(v.prep)}`, fm(total, 0)], alert: prepAlert(v.prep, 'the exam fees, for each level'), rows: [...r.rows.map((x) => [`${E.LEVEL_NAME[x.level]}: ${m(x.fee)} × ${n3(x.sittings)} tries`, m(x.examCost)] as [string, string]), v.prep > 0 ? ['Prep, per attempt', m(r.prep)] : prepRow(0), ['Membership fees after you earn the title', r.dues > 0 ? m(r.dues) : 'not counted']], note: `Assumes ${v.timing === 1 ? 'standard' : 'early'} registration and ${CFA_BASIS_SHORT[b]}. In everyday words: ${r.rows.map((x) => `${E.LEVEL_NAME[x.level]} ${tw(x.sittings).replace(/ tries$| try$/, '')}`).join(', ')} tries on average. If every level is passed the first time: ${m(r.firstTry)}. No enrollment fee since ${dd(P.cfa.enrollmentRemoved)}.` };
+      return { head: [`Expected cost of the three CFA® exams${noPrep(v.prep)}`, fm(total, 0)], alert: prepAlert(v.prep, 'the exam fees, for each level'), rows: [...r.rows.map((x) => [`${E.LEVEL_NAME[x.level]}: ${tw(x.sittings)} × ${m(x.fee)} (${n3(x.sittings)} on average)`, m(x.examCost)] as [string, string]), v.prep > 0 ? ['Course and books, for each try', m(r.prep)] : prepRow(0), ['Yearly membership, once you qualify', r.dues > 0 ? m(r.dues) : 'not counted']], note: `Assumes ${v.timing === 1 ? 'standard' : 'early'} registration and ${CFA_BASIS_SHORT[b]}. A try is one sitting of one exam; the figure in brackets is the average over all candidates. If every level is passed the first time: ${m(r.firstTry)}. No enrollment fee since ${dd(P.cfa.enrollmentRemoved)}.`, exemple: ['Example: early registration, ten-year pass rates, no course', 'change any figure to fit yours'] };
     },
   },
   'cfa-level1': {
@@ -193,7 +210,7 @@ const SPECS: Record<string, MiniSpec> = {
     run: (v) => {
       const r = E.cfaTotal({ window: win(v.timing), rateBasis: cfaBasis(v.basis), prepPerLevel: v.prep, duesPerYear: 0, duesYears: 0, levels: ['l1'] });
       const x = r.rows[0];
-      return { head: ['Expected Level I cost', m(r.total)], rows: [['Registration fee', m(x.fee)], ['Pass rate used', pct(x.p)], ['Average tries to pass', `${n2(x.sittings)} (${tw(x.sittings)})`], ['Chance of passing within two tries', pct(E.passWithin(x.p, 2))]], note: `${P.cfa.examHours} hours, multiple choice. Results come ${P.cfa.resultsWeeks.min} to ${P.cfa.resultsWeeks.max} weeks after the window closes.` };
+      return { exemple: ['Example: early registration, ten-year pass rate', 'change any figure to fit yours'], head: ['Expected Level I cost', m(r.total)], rows: [['Registration fee', m(x.fee)], ['Pass rate used', pct(x.p)], ['Average tries to pass', `${n2(x.sittings)} (${tw(x.sittings)})`], ['Chance of passing within two tries', pct(E.passWithin(x.p, 2))]], note: `${P.cfa.examHours} hours, multiple choice. Results come ${P.cfa.resultsWeeks.min} to ${P.cfa.resultsWeeks.max} weeks after the window closes.` };
     },
   },
   'cfa-retake': {
@@ -209,7 +226,7 @@ const SPECS: Record<string, MiniSpec> = {
       const l = lvl(v.level); const last = E.cfaLatest(l);
       const p = v.basis === 1 ? E.cfaRate(l, last.w) : v.basis === 2 ? E.cfaRecentRate(l) : E.cfaRate(l, 'tenYear');
       const n = E.expectedSittings(p); const fee = E.cfaFee(l, win(v.timing));
-      return { head: [`Tries needed to pass ${E.LEVEL_NAME[l]}, on average`, tw(n).replace(/^about /, '')], rows: [['Average tries, exact', n2(n)], ['Pass rate used', pct(p)], ['Passed within two tries', pct(E.passWithin(p, 2))], ['Passed within three tries', pct(E.passWithin(p, 3))], ['Expected exam fees for this level', m(fee * n)]], note: `${v.basis === 1 ? `Session of ${wLabel(last.w)}, CFA Institute results file.` : 'CFA Institute results file, all candidates of the period counted together. The ten-year average is the one the CFA® cost page uses.'} ${ATTEMPT_NOTE}` };
+      return { exemple: [`Example: ${E.LEVEL_NAME[l]}, ten-year average`, 'pick another level or rate above'], head: [`Tries needed to pass ${E.LEVEL_NAME[l]}, on average`, tw(n).replace(/^about /, '')], rows: [['Average tries, exact', n2(n)], ['Pass rate used', pct(p)], ['Passed within two tries', pct(E.passWithin(p, 2))], ['Passed within three tries', pct(E.passWithin(p, 3))], ['Expected exam fees for this level', m(fee * n)]], note: `${v.basis === 1 ? `Session of ${wLabel(last.w)}, CFA Institute results file.` : 'CFA Institute results file, all candidates of the period counted together. The ten-year average is the one the CFA® cost page uses.'} ${ATTEMPT_NOTE}` };
     },
   },
   'cfa-plan': {
@@ -226,7 +243,7 @@ const SPECS: Record<string, MiniSpec> = {
       const path = E.cfaFastestPath(start, Math.round(v.year), Math.max(1, Math.round(v.gap)));
       const retake = E.cfaNextRetake(start, 'l1');
       const end = path[2];
-      return { head: ['Earliest Level III window', `${MONTH[end.month - 1]} ${end.year}`], rows: [...path.map((x) => [E.LEVEL_NAME[x.level], `${MONTH[x.month - 1]} ${x.year}`] as [string, string]), ['If Level I is failed, earliest retake', `${MONTH[retake.month - 1]} ${Math.round(v.year) + retake.yearsAhead}`]], note: `Level I is offered in ${P.cfa.offered.l1.map((x) => MONTH[x - 1]).join(', ')}; Level II in ${P.cfa.offered.l2.map((x) => MONTH[x - 1]).join(', ')}; Level III in ${P.cfa.offered.l3.map((x) => MONTH[x - 1]).join(' and ')} (sessions held 2024 to 2026).` };
+      return { exemple: [`Example: Level I in ${MONTH[start - 1]} ${Math.round(v.year)}, ${formatNumber(v.gap, 0)} months between levels`, 'change any figure to fit yours'], head: ['Earliest Level III window', `${MONTH[end.month - 1]} ${end.year}`], rows: [...path.map((x) => [E.LEVEL_NAME[x.level], `${MONTH[x.month - 1]} ${x.year}`] as [string, string]), ['If Level I is failed, earliest retake', `${MONTH[retake.month - 1]} ${Math.round(v.year) + retake.yearsAhead}`]], note: `Level I is offered in ${P.cfa.offered.l1.map((x) => MONTH[x - 1]).join(', ')}; Level II in ${P.cfa.offered.l2.map((x) => MONTH[x - 1]).join(', ')}; Level III in ${P.cfa.offered.l3.map((x) => MONTH[x - 1]).join(' and ')} (sessions held 2024 to 2026).` };
     },
   },
 
@@ -235,7 +252,7 @@ const SPECS: Record<string, MiniSpec> = {
     cta: 'Exam windows and deadlines',
     ctaPage: 'cfp-exam-dates',
     inputs: [
-      { id: 'timing', label: 'When you register for the exam', def: 0, options: opt(['Early bird registration', 'Standard', 'Late']) },
+      { id: 'timing', label: 'When you register for the exam', def: 0, options: opt(['Early registration (early bird)', 'Standard', 'Late']), help: 'CFP Board calls early registration “early bird”.' },
       money('education', 'Education program you pay a school', 0, 'The CFP Board-registered coursework; schools set their own price.'),
       money('prep', 'Exam review and books', 0),
       { id: 'years', label: 'Certified years to count (yearly fee)', def: 0, unit: 'yrs', max: 40, help: `${m(P.cfp.annual)} a year once certified. Leave 0 to see the cost of getting certified.` },
@@ -247,7 +264,7 @@ const SPECS: Record<string, MiniSpec> = {
       const r = E.cfpTotal({ window: t, education: v.education, prep: v.prep, years, basis: v.basis === 1 ? 'pooled' : 'latest' });
       const head = years > 0 ? `Expected CFP® cost, with ${formatNumber(years, 0)} certified year${years > 1 ? 's' : ''}` : 'Expected cost to get CFP® certified';
       const total = sumShown(r.fee, r.exams - r.fee, P.cfp.application, P.cfp.annual * years, v.education, v.prep);
-      return { head: [`${head}${noPrep(v.prep)}`, fm(total, 0)], alert: v.education > 0 ? prepAlert(v.prep) : 'Fees only. The education program a school charges is usually the biggest line: type it above, with any review course.', rows: [['Exam fee', m(r.fee)], [extraLabel(r.sittings - 1), rest(r.exams, r.fee)], ['Application', m(P.cfp.application)], years > 0 ? [`Yearly certification fee × ${formatNumber(years, 0)}`, m(P.cfp.annual * years)] : ['Yearly certification fee, once certified', `${m(P.cfp.annual)} a year, not counted`], ['Education program', v.education > 0 ? m(v.education) : 'not included yet'], prepRow(v.prep, 'Exam review and books')], note: `Pass rates used: ${pct(r.p1)} at the first try, ${pct(r.pr)} for a retake.${years > 0 ? ' The first year’s certification fee is prorated by CFP Board; counting it whole keeps the total on the safe side.' : ''}` };
+      return { exemple: ['Example: early registration, latest pass rates, no school program yet', 'change any figure to fit yours'], head: [`${head}${noPrep(v.prep)}`, fm(total, 0)], alert: v.education > 0 ? prepAlert(v.prep) : 'Fees only. The education program a school charges is usually the biggest line: type it above, with any review course.', rows: [['Exam fee', m(r.fee)], [extraLabel(r.sittings - 1), rest(r.exams, r.fee)], ['Application', m(P.cfp.application)], years > 0 ? [`Yearly certification fee × ${formatNumber(years, 0)}`, m(P.cfp.annual * years)] : ['Yearly certification fee, once certified', `${m(P.cfp.annual)} a year, not counted`], ['Education program', v.education > 0 ? m(v.education) : 'not included yet'], prepRow(v.prep, 'Exam review and books')], note: `Pass rates used: ${pct(r.p1)} at the first try, ${pct(r.pr)} for a retake.${years > 0 ? ' The first year’s certification fee is prorated by CFP Board; counting it whole keeps the total on the safe side.' : ''}` };
     },
   },
   'cfp-window': {
@@ -258,21 +275,21 @@ const SPECS: Record<string, MiniSpec> = {
     run: (v) => {
       const w = P.cfp.windows[Math.max(0, Math.min(P.cfp.windows.length - 1, Math.round(v.w)))] as (typeof P.cfp.windows)[number] & { earlyClose?: string; standardClose?: string; lateClose?: string };
       const rows: Array<[string, string]> = [['Registration opens', dd(w.opens)], ['Education verification deadline', dd(w.eduDeadline)]];
-      if (w.earlyClose) rows.push(['Early bird closes', dd(w.earlyClose)], ['Standard closes', dd(w.standardClose!)], ['Late registration closes', dd(w.lateClose!)]);
+      if (w.earlyClose) rows.push(['Early registration (early bird) closes', dd(w.earlyClose)], ['Standard closes', dd(w.standardClose!)], ['Late registration closes', dd(w.lateClose!)]);
       else rows.push(['Early, standard and late deadlines', 'not yet posted by CFP Board']);
-      return { head: ['Exam fee, early bird / standard / late', `${m(P.cfp.exam.early)} / ${m(P.cfp.exam.standard)} / ${m(P.cfp.exam.late)}`], rows, note: `Testing: ${w.test}.` };
+      return { exemple: [`Example: the ${w.test} window`, 'pick another window above'], head: ['Exam fee, early / standard / late', `${m(P.cfp.exam.early)} / ${m(P.cfp.exam.standard)} / ${m(P.cfp.exam.late)}`], rows, note: `Testing: ${w.test}.` };
     },
   },
   'cfp-attempts': {
     title: 'CFP® pass rates: first try and retake',
     cta: 'What retakes add to the bill',
     ctaPage: 'cfp-certification-cost',
-    inputs: [{ id: 's', label: 'Exam session', def: P.cfp.sessions.length - 1, options: P.cfp.sessions.map((s, i) => ({ value: String(i), label: wLabel(s.w) })) }, { id: 'timing', label: 'Fee paid each time', def: 1, options: opt(['Early bird', 'Standard', 'Late']) }],
+    inputs: [{ id: 's', label: 'Exam session', def: P.cfp.sessions.length - 1, options: P.cfp.sessions.map((s, i) => ({ value: String(i), label: wLabel(s.w) })) }, { id: 'timing', label: 'Fee paid each time', def: 1, options: opt(['Early (early bird)', 'Standard', 'Late']) }],
     run: (v) => {
       const s = E.cfpSessions[Math.max(0, Math.min(E.cfpSessions.length - 1, Math.round(v.s)))];
       const p1 = E.cfpRate(s, 'first'), pr = E.cfpRate(s, 'repeat'), n = E.expectedSittings2(p1, pr);
       const fee = P.cfp.exam[(['early', 'standard', 'late'] as const)[Math.max(0, Math.min(2, Math.round(v.timing)))]];
-      return { head: ['Tries needed to pass, on average', tw(n).replace(/^about /, '')], rows: [['Average tries, exact', n2(n)], ['Overall pass rate', pct(E.cfpRate(s, 'all'))], ['First-time candidates', pct(p1)], ['Repeat candidates', pct(pr)], ['Expected exam fees', m(fee * n)]], note: `${formatNumber(s.all[0], 0)} candidates sat in ${wLabel(s.w)} (CFP Board statistics).` };
+      return { exemple: [`Example: the ${wLabel(s.w)} session, standard fee`, 'pick another session above'], head: ['Tries needed to pass, on average', tw(n).replace(/^about /, '')], rows: [['Average tries, exact', n2(n)], ['Overall pass rate', pct(E.cfpRate(s, 'all'))], ['First-time candidates', pct(p1)], ['Repeat candidates', pct(pr)], ['Expected exam fees', m(fee * n)]], note: `${formatNumber(s.all[0], 0)} candidates sat in ${wLabel(s.w)} (CFP Board statistics).` };
     },
   },
   'cfp-experience': {
@@ -283,7 +300,7 @@ const SPECS: Record<string, MiniSpec> = {
     run: (v) => {
       const need = v.path === 1 ? P.cfp.experience.apprenticeship : P.cfp.experience.standard;
       const mo = E.monthsForHours(need, v.hours);
-      return { head: ['Time to log the hours', Number.isFinite(mo) ? `${n1(mo / 12)} years` : 'never'], rows: [['Hours required', formatNumber(need, 0)], ['Months at this pace', Number.isFinite(mo) ? formatNumber(Math.ceil(mo), 0) : '—'], ['Hours a year at this pace', formatNumber(v.hours * 52, 0)]], note: 'Counted at 52 working weeks a year; vacation weeks push the date back.' };
+      return { exemple: [`Example: ${v.path === 1 ? 'apprenticeship' : 'standard'} pathway, ${formatNumber(v.hours, 0)} hours a week`, 'change any figure to fit yours'], head: ['Time to log the hours', Number.isFinite(mo) ? `${n1(mo / 12)} years` : 'never'], rows: [['Hours required', formatNumber(need, 0)], ['Months at this pace', Number.isFinite(mo) ? formatNumber(Math.ceil(mo), 0) : '—'], ['Hours a year at this pace', formatNumber(v.hours * 52, 0)]], note: 'Counted at 52 working weeks a year; vacation weeks push the date back.' };
     },
   },
 
@@ -293,7 +310,7 @@ const SPECS: Record<string, MiniSpec> = {
     ctaPage: 'cpa-requirements',
     inputs: [
       { id: 'state', label: 'Your state (adds its board fees)', def: NO_STATE, options: ST_OR_NONE, help: 'Five states are covered. In another state, keep the first choice and check your board’s fees.' },
-      cpaRetakeField(`Each section you retake costs the section fee again, ${m2(P.cpa.sectionFee)}, the same in every state; California and Texas also charge a board fee for each new try (${m(P.cpa.states.CA.examRepeat!)} and ${m(P.cpa.states.TX.perSection)}). 0 means all four passed the first time.`),
+      cpaRetakeField(`Each section you retake costs the section fee again, ${m2(P.cpa.sectionFee)}, the same in every state; California and Texas also charge a board fee for each new try (${m(P.cpa.states.CA.examRepeat!)} and ${m(P.cpa.states.TX.perSection)}). 0 means all four passed the first time. Not sure? Type 1, then 2, to see the range.`),
       money('prep', 'Review course and books', 0),
     ],
     run: (v, touched = {}) => {
@@ -314,7 +331,7 @@ const SPECS: Record<string, MiniSpec> = {
       const first = state ? `Exam fees ${m(exams)}, plus ${m(boardShown)} of ${E.stateName(state)} board fees we could confirm.` : 'Exam fees only: pick your state to add its board fees.';
       const extra = E.cpaRetakePrice(state) - P.cpa.sectionFee;
       const retakeSaid = extra > 0 ? `One retake costs ${m2(E.cpaRetakePrice(state))} here: the ${m2(P.cpa.sectionFee)} section fee, the same in every state, plus the board’s ${m(extra)} for a new try.` : `One retake costs the ${m2(P.cpa.sectionFee)} section fee, the same in every state; some boards add their own fee for a new try.`;
-      return { head: [`${head}${noPrep(v.prep)}`, fm(total, 0)], alert: prepAlert(v.prep), rows, note: `${first} ${retakeSaid} ${CPA_RATES_NOTE}` };
+      return { head: [`${head}${noPrep(v.prep)}`, fm(total, 0)], alert: prepAlert(v.prep), rows, note: `${first} ${retakeSaid} ${CPA_RATES_NOTE}`, exemple: ['Starting point: every section passed the first time', 'type the retakes you expect'] };
     },
   },
   'cpa-discipline': {
@@ -328,8 +345,7 @@ const SPECS: Record<string, MiniSpec> = {
     run: (v, touched = {}) => {
       const r = E.cpaLeft(v.passed, v.retakes);
       const example = !touched.passed && !touched.retakes;
-      const head = example ? 'Example, not your plan yet (no section passed, no retake): section fees left to pay' : 'Section fees left to pay';
-      return { head: [head, m(r.fees)], rows: [['Sections still to pass', formatNumber(r.left, 0)], [`Sections not yet passed: ${formatNumber(r.left, 0)} × ${m2(P.cpa.sectionFee)}`, m(r.left * P.cpa.sectionFee)], [`Retakes you expect: ${formatNumber(r.retakes, 0)} × ${m2(P.cpa.sectionFee)}`, r.retakes ? m(r.retakes * P.cpa.sectionFee) : 'none typed'], ['Tries left to book', formatNumber(r.sittings, 0)]], note: `${example ? 'Choose how many sections you have passed and type the retakes you expect. ' : ''}The fourth section, the one you pick among three topics, costs the same as the others. State board fees are not in this figure. ${CPA_RATES_NOTE}` };
+      return { exemple: ['Starting point: no section passed yet, no retake', 'choose your own above'], head: ['Section fees left to pay', m(r.fees)], rows: [['Sections still to pass', formatNumber(r.left, 0)], [`Sections not yet passed: ${formatNumber(r.left, 0)} × ${m2(P.cpa.sectionFee)}`, m(r.left * P.cpa.sectionFee)], [`Retakes you expect: ${formatNumber(r.retakes, 0)} × ${m2(P.cpa.sectionFee)}`, r.retakes ? m(r.retakes * P.cpa.sectionFee) : 'none typed'], ['Tries left to book', formatNumber(r.sittings, 0)]], note: `${example ? 'Choose how many sections you have passed and type the retakes you expect. ' : ''}The fourth section, the one you pick among three topics, costs the same as the others. State board fees are not in this figure. ${CPA_RATES_NOTE}` };
     },
   },
   'cpa-passrate': {
@@ -337,7 +353,7 @@ const SPECS: Record<string, MiniSpec> = {
     cta: 'What the retakes cost in total',
     ctaPage: 'cpa-exam-cost',
     inputs: [
-      { id: 'rate', label: 'Pass rate you read for the section', def: 45, unit: '%', max: 100, decimals: 1, help: 'Type the rate the AICPA publishes for your section. 45% is an example, not an AICPA figure.' },
+      { id: 'rate', label: 'Pass rate you read for the section', def: 45, unit: '%', max: 100, decimals: 1, help: 'Type the rate the AICPA publishes for your section: open its page with the link just above. 45% is only a placeholder.' },
       { id: 'n', label: 'Tries you budget for', def: 2, max: 10 },
     ],
     run: (v, touched = {}) => {
@@ -345,8 +361,8 @@ const SPECS: Record<string, MiniSpec> = {
       const example = !touched.rate;
       const avg = E.expectedSittings(p);
       const ok = Number.isFinite(avg);
-      const head = `${example ? 'Example at a 45% pass rate, not an AICPA figure: chance' : 'Chance'} of passing within ${formatNumber(n, 0)} tr${n > 1 ? 'ies' : 'y'}`;
-      return { head: [head, pct(E.passWithin(p, n))], rows: [['Pass rate used', pct(p)], ['Average tries to pass', ok ? `${n2(avg)} (${tw(avg)})` : 'no finite answer at 0%'], [`Fees for ${formatNumber(n, 0)} tr${n > 1 ? 'ies' : 'y'}`, m(n * P.cpa.sectionFee)], ['Average fees for this section', ok ? m(avg * P.cpa.sectionFee) : '—']], note: `${example ? 'Type the pass rate published by the AICPA for your section. ' : ''}A pass rate is an average over all candidates, first-timers and repeaters together; your own odds may be better or worse. Each try costs ${m2(P.cpa.sectionFee)}.` };
+      const head = `Chance of passing within ${formatNumber(n, 0)} tr${n > 1 ? 'ies' : 'y'}, at the rate above`;
+      return { head: [head, pct(E.passWithin(p, n))], rows: [['Pass rate used', pct(p)], ['Average tries to pass', ok ? `${n2(avg)} (${tw(avg)})` : 'no finite answer at 0%'], [`Fees for ${formatNumber(n, 0)} tr${n > 1 ? 'ies' : 'y'}`, m(n * P.cpa.sectionFee)], ['Average fees for this section', ok ? m(avg * P.cpa.sectionFee) : '—']], exemple: ['Illustration only: 45% is not an AICPA figure', 'type the rate you read on the AICPA page'], note: `${example ? 'Type the pass rate published by the AICPA for your section. ' : ''}A pass rate is an average over all candidates, first-timers and repeaters together; your own odds may be better or worse. Each try costs ${m2(P.cpa.sectionFee)}.` };
     },
   },
   'cpa-eligibility': {
@@ -364,13 +380,13 @@ const SPECS: Record<string, MiniSpec> = {
       const example = !touched.hours && !touched.years;
       const s = st(v.state); const date = DATED.has(s) ? APPLY_DATES[Math.max(0, Math.min(3, Math.round(v.when)))] : APPLY_DATES[0];
       const r = E.cpaEligibility(s, v.hours, v.years, date);
-      const rows: Array<[string, string]> = r.routes.map((x) => [x.name, !x.open ? (x.from && date < x.from ? `opens ${dd(x.from)}` : `closed from ${dd(x.until!)}`) : x.hoursShort || x.yearsShort ? `short ${[x.hoursShort ? `${formatNumber(x.hoursShort, 0)} hours` : '', x.yearsShort ? `${n1(x.yearsShort)} years of experience` : ''].filter(Boolean).join(' and ')}` : example ? 'this example fits' : 'you fit']);
+      const rows: Array<[string, string]> = r.routes.map((x) => [x.name, !x.open ? (x.from && date < x.from ? `opens ${dd(x.from)}` : `closed from ${dd(x.until!)}`) : x.hoursShort || x.yearsShort ? `${[x.hoursShort ? `${formatNumber(x.hoursShort, 0)} hours` : '', x.yearsShort ? `${n1(x.yearsShort)} years of experience` : ''].filter(Boolean).join(' and ')} missing` : example ? 'this example fits' : 'you fit']);
       const routeName = (hours: number) => (s === 'TX' ? (hours === 150 ? 'Pathway A (150 hours)' : 'Pathway B (120 hours)') : `${hours}-hour route`);
       // « Example, not your result yet » is shown by MentionExemple (trame) until a field is changed;
       // the head keeps saying “this example” until hours or years are typed.
       const exLabel = `With ${formatNumber(v.hours, 0)} semester hours and ${formatNumber(v.years, Number.isInteger(v.years) ? 0 : 1)} years of work, the route would be (type your own above)`;
       const head = r.fits.length ? [example ? exLabel : 'Route open with the hours and years above', routeName(r.fits[0].hours)] : [example ? 'No route fits this example: type your own hours and years above' : 'No route fits yet', r.nearest ? `closest: ${routeName(r.nearest.hours)}` : 'see the board'];
-      return { head, rows, note: s === 'FL' ? 'Florida law still requires 150 hours for the license; 120 hours are enough to sit for the exam.' : s === 'CA' ? 'From January 1, 2027 the California Board of Accountancy mentions extra flexibility for candidates with an advanced degree or changing careers; it is not modeled here, so check with the board.' : s === 'NY' ? 'From August 1, 2027 the 150-hour route follows the course content of the 150E pathway; content rules apply on top of the hours.' : 'Education content rules (accounting and business hours) apply on top: see the state page.' };
+      return { exemple: [`Example: ${formatNumber(v.hours, 0)} semester hours, ${formatNumber(v.years, Number.isInteger(v.years) ? 0 : 1)} years of work`, 'type your own above'], head, rows, note: s === 'FL' ? 'Florida law still requires 150 hours for the license; 120 hours are enough to sit for the exam.' : s === 'CA' ? 'From January 1, 2027 the California Board of Accountancy mentions extra flexibility for candidates with an advanced degree or changing careers; it is not modeled here, so check with the board.' : s === 'NY' ? 'From August 1, 2027 the 150-hour route follows the course content of the 150E pathway; content rules apply on top of the hours.' : 'Education content rules (accounting and business hours) apply on top: see the state page.' };
     },
   },
 
@@ -384,7 +400,7 @@ const SPECS: Record<string, MiniSpec> = {
       const retakes = Math.max(0, Math.round(v.retakes)), n = P.ea.parts + retakes, y = Math.max(1, Math.round(v.years));
       const r = E.eaTotal({ sittings: n, prep: v.prep, years: y });
       const total = sumShown(r.exams, r.enrollment, r.ptin, v.prep);
-      return { head: [`Enrolled agent fees${retakes ? '' : ', all three parts passed the first time'}${noPrep(v.prep)}`, fm(total, 0)], alert: prepAlert(v.prep), rows: [[`IRS exam: ${m(P.ea.perPart)} × ${formatNumber(n, 0)}${retakes ? ` (${formatNumber(retakes, 0)} retake${retakes > 1 ? 's' : ''})` : ''}`, m(r.exams)], ['Enrollment with the IRS', m(r.enrollment)], [`Tax preparer ID, ${m2(P.ea.ptin)} a year × ${formatNumber(y, 0)}`, m(r.ptin)], prepRow(v.prep)], note: `The exam fee already includes the IRS’s own share, ${m(P.ea.irsUserFee)} a part (${m(r.irsShare)} for ${formatNumber(n, 0)} part${n === 1 ? '' : 's'}). The IRS publishes no pass rate, so retakes are the ones you type. Passed parts stay valid for ${P.ea.carryoverYears} years; apply for enrollment within ${P.ea.applyWithinYears} year of the last pass.` };
+      return { exemple: ['Starting point: all three parts passed the first time', 'type the retakes you expect'], head: [`Enrolled agent fees${retakes ? '' : ', all three parts passed the first time'}${noPrep(v.prep)}`, fm(total, 0)], alert: prepAlert(v.prep), rows: [[`IRS exam: ${m(P.ea.perPart)} × ${formatNumber(n, 0)}${retakes ? ` (${formatNumber(retakes, 0)} retake${retakes > 1 ? 's' : ''})` : ''}`, m(r.exams)], ['Enrollment with the IRS', m(r.enrollment)], [`Tax preparer ID, ${m2(P.ea.ptin)} a year × ${formatNumber(y, 0)}`, m(r.ptin)], prepRow(v.prep)], note: `Of each ${m(P.ea.perPart)} part, ${m(P.ea.irsUserFee)} goes to the IRS and the rest to the test provider; nothing more to add. The IRS publishes no pass rate, so retakes are the ones you type. Passed parts stay valid for ${P.ea.carryoverYears} years; apply for enrollment within ${P.ea.applyWithinYears} year of the last pass.` };
     },
   },
   'cia-total': {
@@ -394,7 +410,7 @@ const SPECS: Record<string, MiniSpec> = {
     inputs: [{ id: 'member', label: 'Member of the Institute of Internal Auditors?', def: 0, options: opt(['No', 'Yes']) }, { id: 'year', label: 'Price list', def: 0, options: opt(['2026 prices', `Prices from ${dd(P.cia.y2027.from)}`]) }, { id: 'extra', label: 'Retakes you budget', def: 0, max: 10 }, money('prep', 'Review course and books', 0)],
     run: (v) => {
       const r = E.ciaTotal({ member: v.member === 1, year: v.year === 1 ? '2027' : '2026', extraSittings: Math.max(0, Math.round(v.extra)), prep: v.prep });
-      return { head: [`CIA fees${noPrep(v.prep)}`, fm(sumShown(r.application, ...r.parts, r.retakes, v.prep), 0)], alert: prepAlert(v.prep), rows: [['Application', m(r.application)], ['Part 1', m(r.parts[0])], ['Part 2', m(r.parts[1])], ['Part 3', m(r.parts[2])], ['Retakes (average part fee)', m(r.retakes)], prepRow(v.prep)], note: `You have ${P.cia.eligibilityYears} years from acceptance into the program to complete the eligibility requirements.` };
+      return { exemple: ['Example: non-member, 2026 prices, no retake', 'change any figure to fit yours'], head: [`CIA fees${noPrep(v.prep)}`, fm(sumShown(r.application, ...r.parts, r.retakes, v.prep), 0)], alert: prepAlert(v.prep), rows: [['Application', m(r.application)], ['Part 1', m(r.parts[0])], ['Part 2', m(r.parts[1])], ['Part 3', m(r.parts[2])], ['Retakes (average part fee)', m(r.retakes)], prepRow(v.prep)], note: `You have ${P.cia.eligibilityYears} years from acceptance into the program to complete the eligibility requirements.` };
     },
   },
   'frm-total': {
@@ -404,7 +420,7 @@ const SPECS: Record<string, MiniSpec> = {
     inputs: [{ id: 'timing', label: 'When you register', def: 0, options: TIMING }, { id: 'extra', label: 'Retakes you budget', def: 0, max: 10 }, money('prep', 'Review course and books', 0)],
     run: (v) => {
       const r = E.frmTotal({ window: win(v.timing), extraSittings: Math.max(0, Math.round(v.extra)), prep: v.prep });
-      return { head: [`FRM® fees${noPrep(v.prep)}`, fm(sumShown(r.enrollment, r.exams, v.prep), 0)], alert: prepAlert(v.prep), rows: [['One-time enrollment', m(r.enrollment)], [`Exam fee × ${formatNumber(P.frm.parts + Math.round(v.extra), 0)}`, m(r.exams)], prepRow(v.prep)], note: `Part I and Part II cost the same: ${m(P.frm.early)} early, ${m(P.frm.standard)} standard (GARP, 2027 sessions).` };
+      return { exemple: ['Example: early registration, no retake', 'change any figure to fit yours'], head: [`FRM® fees${noPrep(v.prep)}`, fm(sumShown(r.enrollment, r.exams, v.prep), 0)], alert: prepAlert(v.prep), rows: [['One-time enrollment', m(r.enrollment)], [`Exam fee × ${formatNumber(P.frm.parts + Math.round(v.extra), 0)}`, m(r.exams)], prepRow(v.prep)], note: `Part I and Part II cost the same: ${m(P.frm.early)} early, ${m(P.frm.standard)} standard (GARP, 2027 sessions).` };
     },
   },
 };

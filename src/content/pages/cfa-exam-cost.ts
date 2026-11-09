@@ -36,7 +36,7 @@ export default definePage({
     const rows = ten.rows.map((x) => [h.E.LEVEL_NAME[x.level], h.pc(x.p), h.num2(x.sittings), h.m(x.examCost)]);
     return `
 <h2>Registration fees by level and window</h2>
-<p>CFA Institute sets two prices for each exam: an early registration fee and a higher standard registration fee for candidates who register later in the window. From ${h.P.cfa.newPricingFrom} the difference is ${h.m(f.l1.standard - f.l1.early)} at every level; in 2025 it was ${h.m(h.P.cfa.fees2025.l1.standard - h.P.cfa.fees2025.l1.early)}. Prices rose for exams from ${h.P.cfa.newPricingFrom}, the same press release that ended the enrollment fee.</p>
+<p>A window is the few weeks in which an exam can be taken. CFA Institute sets two prices for each exam: an early registration fee and a higher standard registration fee for candidates who register later in the window. From ${h.P.cfa.newPricingFrom} the difference is ${h.m(f.l1.standard - f.l1.early)} at every level; in 2025 it was ${h.m(h.P.cfa.fees2025.l1.standard - h.P.cfa.fees2025.l1.early)}. Prices rose for exams from ${h.P.cfa.newPricingFrom}, the same press release that ended the enrollment fee.</p>
 ${h.table(['Level', 'Early, 2025', 'Standard, 2025', 'Early, from 2026', 'Standard, from 2026'], fees, `${h.src('cfa_pricing', 'CFA Institute press release of December 18, 2024')}, read on ${h.read}.`, ['l', 'r', 'r', 'r', 'r'])}
 <p>Paying early on all three exams saves ${h.m(3 * (f.l1.standard - f.l1.early))} against paying the standard fee three times. That gap grows with every retake, because a retake is a new registration with the same two prices.</p>
 

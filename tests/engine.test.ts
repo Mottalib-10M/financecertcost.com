@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import * as E from '../src/lib/engine/certs';
 import { P } from '../src/lib/engine/params';
-import { getSpec } from '../src/lib/mini-specs';
+import { getSpec, SPEC_IDS } from '../src/lib/mini-specs';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import MiniSim from '../src/components/calc/MiniSim';
@@ -140,35 +140,52 @@ describe('EA, CIA, FRM®', () => {
 
 describe('CPA calculators: retakes typed, result marked “Example” until then', () => {
   const def = (kind: string) => Object.fromEntries(getSpec(kind).inputs.map((i) => [i.id, i.def]));
-  it('cpa-total and the comparator set on the CPA open on $1,074, no retake counted yet, and say what one retake adds', () => {
-    for (const [kind, extra] of [['cpa-total', {}], ['total', { cert: 0 }]] as const) {
-      const out = getSpec(kind).run({ ...def(kind), ...extra }, {});
-      expect(out.head[0].startsWith('No retake counted yet: ')).toBe(true);
-      expect(out.head[1]).toBe('$1,074');
-      if (kind === 'total') expect(out.note).toContain('one retake brings the fees to $1,343, two to $1,612');
-      expect(out.alert).toContain('Review courses often cost');
-    }
+  it('cpa-total opens on $1,074, no retake counted yet, and its mention says it is the best case (final round)', () => {
+    const out = getSpec('cpa-total').run(def('cpa-total'), {});
+    expect(out.head[0].startsWith('No retake counted yet: ')).toBe(true);
+    expect(out.head[1]).toBe('$1,074');
+    expect(out.alert).toContain('Review courses often cost');
+    expect(out.exemple).toEqual(['Starting point: every section passed the first time', 'type the retakes you expect']);
   });
-  it('the home comparator opens on the CFA® Program, retakes included (4th round)', () => {
+  it('the home comparator opens on the CPA with one retake, said as an example, not on the dearest credential (final round)', () => {
     const out = getSpec('total').run(def('total'), {});
+    expect(out.head).toEqual(['CPA exam fees with 1 retake', '$1,343']);
+    expect(out.note).toContain('With none the fees are $1,074; with two, $1,612');
+    expect(out.exemple?.[0]).toBe('Example: CPA, 1 retake, no review course');
+    expect(out.alert).toContain('Review courses often cost');
+    const none = getSpec('total').run({ ...def('total'), retakes: 0 }, { retakes: true });
+    expect(none.head[1]).toBe('$1,074');
+  });
+  it('the comparator set on the CFA® counts the retakes, said in words, no decimal tries (final round)', () => {
+    const out = getSpec('total').run({ ...def('total'), cert: 1 }, { cert: true });
     expect(out.head[0]).toContain('retakes included');
     expect(out.head[1]).toBe('$7,800');
-    expect(out.note).toContain('against 3 for someone who never fails');
+    expect(out.note).toContain('about 6 to 7 exams in total for the three levels, against 3 for someone who never fails');
+    expect(out.note).not.toMatch(/\d\.\d/);
   });
-  it('the first CPA screen says “Example” once, from MentionExemple (report of 2026-11-08)', () => {
+  it('the first CPA screen says “Example” at most once, from MentionExemple, with what it assumes (final round)', () => {
     const html = renderToStaticMarkup(createElement(MiniSim, { kind: 'cpa-total', primary: true }));
-    expect(html.match(/Example/g)).toHaveLength(1);
+    expect(html.match(/Example/g) ?? []).toHaveLength(0);
+    expect(html.match(/Starting point/g)).toHaveLength(1);
     expect(html).toContain('data-exemple');
-    expect(html).toContain('Example: a typical case');
+    expect(html).not.toContain('typical case');
+  });
+  it('no calculator shows the generic “typical case” mention: each says what its example assumes (final round)', () => {
+    for (const id of SPEC_IDS) {
+      const sp = getSpec(id);
+      const out = sp.run(def(id), {});
+      expect(out.exemple, id).toBeDefined();
+      expect(out.exemple![0]).not.toMatch(/typical/i);
+    }
   });
   it('Texas: retake section fee and board fee on separate lines, the note gives the sum (4th round)', () => {
     const out = getSpec('cpa-total').run({ ...def('cpa-total'), state: 3 }, {});
     expect(out.rows[1][0]).toBe('Retakes you expect: 0 × $268.59 section fee');
     expect(out.note).toContain('One retake costs $283.59 here: the $268.59 section fee, the same in every state, plus the board’s $15 for a new try.');
   });
-  it('CFA® lines multiply as shown: $1,140 × 2.471 = $2,817 (4th round)', () => {
+  it('CFA® lines say the tries in words first and still multiply as shown: $1,140 × 2.471 = $2,817 (final round)', () => {
     const out = getSpec('cfa-total').run(def('cfa-total'), {});
-    expect(out.rows[0]).toEqual(['Level I: $1,140 × 2.471 tries', '$2,817']);
+    expect(out.rows[0]).toEqual(['Level I: about 2 to 3 tries × $1,140 (2.471 on average)', '$2,817']);
   });
   it('enrolled agent: retakes from 0, like the CPA (4th round)', () => {
     const sp = getSpec('ea-total');
@@ -176,11 +193,16 @@ describe('CPA calculators: retakes typed, result marked “Example” until then
     expect(sp.run({ ...def('ea-total') }, {}).head[1]).toBe('$1,110');
     expect(sp.run({ ...def('ea-total'), retakes: 1 }, { retakes: true }).head[1]).toBe('$1,427');
   });
-  it('beginner path: unsure and no degree leads to the enrolled agent; accounting without a degree says “not yet”', () => {
+  it('beginner path: “not sure” recommends nothing and lists all six, cheapest first; accounting without a degree says “not yet”', () => {
     const sp = getSpec('start');
     const a = sp.run(def('start'), {});
-    expect(a.head).toEqual(['Enrolled agent (EA), tax practitioner: exam fees at the first try', '$1,110']);
-    expect(a.go?.[1]).toBe('/en/enrolled-agent-exam-cost/');
+    expect(a.head).toEqual(['Six credentials: exam fees at the first try', '$1,074 to $3,520']);
+    expect(a.rows).toHaveLength(6);
+    expect(a.rows[0]).toEqual(['CPA: licensed accountant', '$1,074']);
+    expect(a.rows[5]).toEqual(['CFA®: investment analyst', '$3,520']);
+    expect(a.note).toContain('no education-hour rule');
+    const t = sp.run({ ...def('start'), work: 1 }, { work: true });
+    expect(t.go?.[1]).toBe('/en/enrolled-agent-exam-cost/');
     const b = sp.run({ work: 0, degree: 0 }, { work: true });
     expect(b.rows[1][1].startsWith('Not yet')).toBe(true);
     expect(b.note).toContain('enrolled agent exam has no education-hour rule');
@@ -193,7 +215,7 @@ describe('CPA calculators: retakes typed, result marked “Example” until then
   });
   it('the pass-rate tool uses only the rate the reader types', () => {
     const ex = getSpec('cpa-passrate').run(def('cpa-passrate'), {});
-    expect(ex.head[0].startsWith('Example')).toBe(true);
+    expect(ex.exemple?.[0]).toBe('Illustration only: 45% is not an AICPA figure');
     const r = getSpec('cpa-passrate').run({ rate: 40, n: 2 }, { rate: true });
     expect(r.head[1]).toBe('64.0%');
   });

@@ -14,7 +14,7 @@ export default definePage({
   title: 'Texas CPA Requirements: Pathway A and Pathway B Explained',
   description: 'Texas CPA requirements since August 1, 2026: Pathway A with 150 hours and 12 months, Pathway B with 120 hours and 24 months, the ethics rules and board fees.',
   h1: 'Texas CPA requirements: Pathway A or Pathway B',
-  intro: 'Texas offers two routes to the CPA license: Pathway A with 150 college semester hours and 1 year of experience, Pathway B with 120 hours, usually a bachelor’s degree, and 2 years. Type your hours and years of experience to see which one you fit.',
+  intro: 'Texas offers two routes to the CPA license: Pathway A with 150 college semester hours and 1 year of experience, Pathway B with 120 hours, usually a bachelor’s degree, and 2 years. Type your hours and years of experience to see which one you fit. In another state, see the CPA requirements page.',
   resume: (h) => {
     const T = h.P.cpa.states.TX;
     return `The Texas State Board of Public Accountancy (TSBPA) now offers two routes to the CPA certificate. Pathway A is for candidates with at least 150 semester hours of college coursework and asks for ${T.now.expMonths} calendar months of full-time experience, or at least ${h.num(T.now.partTimeHours)} hours of part-time work over no more than ${T.now.partTimeYears} consecutive years. Pathway B, in effect since ${h.date(T.next.from)}, is for candidates with at least 120 semester hours and asks for ${T.next.expMonths} months full-time, or ${h.num(T.next.partTimeHours)} part-time hours over no more than ${T.next.partTimeYears} years. Both require a board-approved ${T.ethicsCourseHours}-semester-hour ethics course and a pass on the board’s exam on its Rules of Professional Conduct. TSBPA charges a ${h.m(T.perSection)} eligibility fee for each exam section applied for and ${h.m(T.certificate)} to issue the certificate; the section fees themselves are paid to NASBA.`;
@@ -39,7 +39,7 @@ ${h.box('Financial aid', '<p>The Texas board runs an Examination Fee Financial A
 <ol>
 <li><strong>Application of intent.</strong> Texas candidates first file an application of intent, which lapses after two years if no section is sat. The fee amount was not stated on the page we read and is not shown.</li>
 <li><strong>Eligibility application.</strong> ${h.m(T.perSection)} per section applied for, nonrefundable, according to the ${h.src('tx_elig', 'eligibility page')}. Approval opens a ${T.windowDays}-day window, with no extensions.</li>
-<li><strong>NASBA section fee.</strong> ${h.m2(h.P.cpa.sectionFee)} per section as of ${h.date(h.P.cpa.sectionFeeFrom)} (Virginia board figure; the fee is set by NASBA). TSBPA says it receives none of it.</li>
+<li><strong>NASBA section fee.</strong> ${h.m2(h.P.cpa.sectionFee)} per section as of ${h.date(h.P.cpa.sectionFeeFrom)} the same in every state: it is set and collected by NASBA (the National Association of State Boards of Accountancy). The Texas board (TSBPA) says it receives none of it.</li>
 <li><strong>Ethics.</strong> A board-approved ${T.ethicsCourseHours}-semester-hour ethics course, and an exam on the Rules of Professional Conduct, sent after you apply.</li>
 <li><strong>Certificate.</strong> ${h.m(T.certificate)} to issue it; the license fee follows.</li>
 </ol>

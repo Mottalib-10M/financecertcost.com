@@ -6,5 +6,8 @@ export interface MiniOut { head: [string, string]; rows: Array<[string, string]>
   /** One line in bold right under the big figure: what the figure leaves out (4th naive round: “prep, the biggest line, is hidden”). */
   alert?: string;
   /** Link that depends on the answer (beginner path): [label, path such as /en/cpa-exam-cost/] (no router import in the client bundle). Replaces the spec's fixed link. */
-  go?: [string, string] }
+  go?: [string, string];
+  /** Mention shown while no field is changed, saying what the example assumes in plain words ([what, what to do]);
+   *  replaces the generic « Example: a typical case » (final naive round: “typical case” on a no-retake figure). */
+  exemple?: [string, string] }
 export interface MiniSpec { title: string; cta: string; ctaPage?: string; inputs: MiniInput[]; /** `touched`: the fields the reader has changed (3rd naive round: a pre-filled verdict read as “you fit”). */ run: (v: Record<string, number>, touched?: Record<string, boolean>) => MiniOut }
