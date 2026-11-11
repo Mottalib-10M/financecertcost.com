@@ -45,6 +45,7 @@ for (let i = 0; i < parts.length; i += 3) { chunks.push({ html: parts[i] }); if 
     </header>
     {page.avantOutil && <p class="mb-3 rounded-md border-l-4 border-accent-600 bg-accent-50 px-3 py-1 text-sm font-semibold text-navy-900 [&_a]:text-accent-700 [&_a]:underline" set:html={page.avantOutil(h)} />}
     {page.tool && <div data-outil class="mb-4"><Tool tool={page.tool} primary={true} /></div>}
+    {page.apresOutil && <div class="mb-4 border-l-4 border-accent-500 bg-accent-50 p-4 text-navy-900 [&_a]:font-medium [&_a]:text-accent-700 [&_a]:underline" set:html={page.apresOutil(h)} />}
     <Clamp text={page.resume(h)} id={`clamp-${page.id}`} lang={lang} class="mb-3" />
     {page.mini && <div class="mb-4"><Tool tool={page.mini} idPrefix="g" /></div>}
     <p class="mb-8 text-sm text-navy-600">{ui.reviewedBy} <a href={route('about', lang)} class="underline hover:text-navy-900">{AUTHOR_NAME}</a> · <a href={route('editorial', lang)} class="underline hover:text-navy-900">{ui.editorialPolicy}</a> · <a href={route('method', lang)} class="underline hover:text-navy-900">{label('method', lang)}</a></p>

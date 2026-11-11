@@ -2,7 +2,9 @@
 export interface MiniInput { id: string; label: string; def: number; unit?: string; max?: number; decimals?: number; help?: string; options?: Array<{ value: string; label: string }>; /** Shown only when it changes the result (naive test of 2026-11-08: a field without effect reads as a bug). */ showIf?: (v: Record<string, number>) => boolean;
   /** Champ facultatif rangé dans le repli « Plus de détails » ; sa valeur actuelle reste lisible dans le titre du repli. */
   avance?: boolean }
-export interface MiniOut { head: [string, string]; rows: Array<[string, string]>; note?: string;
+export interface MiniOut { head: [string, string];
+  /** One line right under the big figure: what it assumes and over which period (rule 1 of 2026-11-10). */
+  hyp?: string; rows: Array<[string, string]>; note?: string;
   /** One line in bold right under the big figure: what the figure leaves out (4th naive round: “prep, the biggest line, is hidden”). */
   alert?: string;
   /** Link that depends on the answer (beginner path): [label, path such as /en/cpa-exam-cost/] (no router import in the client bundle). Replaces the spec's fixed link. */

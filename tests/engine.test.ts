@@ -147,21 +147,21 @@ describe('CPA calculators: retakes typed, result marked “Example” until then
     expect(out.alert).toContain('Review courses often cost');
     expect(out.exemple).toEqual(['Starting point: every section passed the first time', 'type the retakes you expect']);
   });
-  it('the home comparator opens on the CPA with one retake, said as an example, not on the dearest credential (final round)', () => {
+  it('the comparator (embed) opens on the CPA at $1,074, the one CPA figure of the site (rule 1 of 2026-11-10)', () => {
     const out = getSpec('total').run(def('total'), {});
-    expect(out.head).toEqual(['CPA exam fees with 1 retake', '$1,343']);
-    expect(out.note).toContain('With none the fees are $1,074; with two, $1,612');
-    expect(out.exemple?.[0]).toBe('Example: CPA, 1 retake, no review course');
+    expect(out.head).toEqual(['CPA exam fees, all four sections passed the first time', '$1,074']);
+    expect(out.hyp).toBe('Assumes 2026 section fees; state board fees left out.');
+    expect(out.exemple?.[0]).toBe('Example: CPA, 0 retakes, no review course');
     expect(out.alert).toContain('Review courses often cost');
-    const none = getSpec('total').run({ ...def('total'), retakes: 0 }, { retakes: true });
-    expect(none.head[1]).toBe('$1,074');
+    const one = getSpec('total').run({ ...def('total'), retakes: 1 }, { retakes: true });
+    expect(one.head).toEqual(['CPA exam fees with 1 retake', '$1,343']);
   });
   it('the comparator set on the CFA® counts the retakes, said in words, no decimal tries (final round)', () => {
     const out = getSpec('total').run({ ...def('total'), cert: 1 }, { cert: true });
-    expect(out.head[0]).toContain('retakes included');
+    expect(out.head[0]).toMatch(/^With the usual retakes/);
     expect(out.head[1]).toBe('$7,800');
-    expect(out.note).toContain('about 6 to 7 exams in total for the three levels, against 3 for someone who never fails');
-    expect(out.note).not.toMatch(/\d\.\d/);
+    expect(out.hyp).toContain('ten-year pass rates: about 6 to 7 exams in all');
+    expect(out.hyp).not.toMatch(/\d\.\d/);
   });
   it('the first CPA screen says “Example” at most once, from MentionExemple, with what it assumes (final round)', () => {
     const html = renderToStaticMarkup(createElement(MiniSim, { kind: 'cpa-total', primary: true }));
@@ -183,9 +183,18 @@ describe('CPA calculators: retakes typed, result marked “Example” until then
     expect(out.rows[1][0]).toBe('Retakes you expect: 0 × $268.59 section fee');
     expect(out.note).toContain('One retake costs $283.59 here: the $268.59 section fee, the same in every state, plus the board’s $15 for a new try.');
   });
-  it('CFA® lines say the tries in words first and still multiply as shown: $1,140 × 2.471 = $2,817 (final round)', () => {
+  it('CFA® lines say the tries in words, no decimal (rule 1 of 2026-11-10: one sentence, one figure)', () => {
     const out = getSpec('cfa-total').run(def('cfa-total'), {});
-    expect(out.rows[0]).toEqual(['Level I: about 2 to 3 tries × $1,140 (2.471 on average)', '$2,817']);
+    expect(out.rows[0]).toEqual(['Level I: about 2 to 3 tries × $1,140', '$2,817']);
+    for (const [l] of out.rows) expect(l).not.toMatch(/\d\.\d/);
+  });
+  it('review course: “Not counted yet” by default, a rough guess as much as the exam fees on demand (rule 5 of 2026-11-10)', () => {
+    const sp = getSpec('cpa-total');
+    expect(sp.inputs.find((i) => i.id === 'prepWay')).toMatchObject({ def: 0 });
+    expect(sp.run(def('cpa-total'), {}).head[1]).toBe('$1,074');
+    const g = sp.run({ ...def('cpa-total'), prepWay: 1 }, { prepWay: true });
+    expect(g.head[1]).toBe('$2,148');
+    expect(g.rows.some(([l, x]) => /rough guess/.test(l) && x === '$1,074')).toBe(true);
   });
   it('enrolled agent: retakes from 0, like the CPA (4th round)', () => {
     const sp = getSpec('ea-total');
@@ -196,16 +205,17 @@ describe('CPA calculators: retakes typed, result marked “Example” until then
   it('beginner path: “not sure” recommends nothing and lists all six, cheapest first; accounting without a degree says “not yet”', () => {
     const sp = getSpec('start');
     const a = sp.run(def('start'), {});
-    expect(a.head).toEqual(['Six credentials: exam fees at the first try', '$1,074 to $3,520']);
+    expect(a.head).toEqual(['If you pass every exam the first time: exam fees of the six', '$1,074 to $3,520']);
+    expect(a.alert).toBe('With the usual retakes, the dearest, the CFA®, comes to about $7,800.');
     expect(a.rows).toHaveLength(6);
     expect(a.rows[0]).toEqual(['CPA: licensed accountant', '$1,074']);
     expect(a.rows[5]).toEqual(['CFA®: investment analyst', '$3,520']);
-    expect(a.note).toContain('no education-hour rule');
+    expect(a.note).toContain('The enrolled agent is the one credential here that asks for none: $1,110');
     const t = sp.run({ ...def('start'), work: 1 }, { work: true });
     expect(t.go?.[1]).toBe('/en/enrolled-agent-exam-cost/');
     const b = sp.run({ work: 0, degree: 0 }, { work: true });
     expect(b.rows[1][1].startsWith('Not yet')).toBe(true);
-    expect(b.note).toContain('enrolled agent exam has no education-hour rule');
+    expect(b.note).toContain('The enrolled agent asks for no college degree: $1,110');
   });
   it('one retake typed: $1,074 + $269, no longer an example', () => {
     const out = getSpec('cpa-total').run({ ...def('cpa-total'), retakes: 1 }, { retakes: true });
@@ -217,6 +227,7 @@ describe('CPA calculators: retakes typed, result marked “Example” until then
     const ex = getSpec('cpa-passrate').run(def('cpa-passrate'), {});
     expect(ex.exemple?.[0]).toBe('Illustration only: 45% is not an AICPA figure');
     const r = getSpec('cpa-passrate').run({ rate: 40, n: 2 }, { rate: true });
-    expect(r.head[1]).toBe('64.0%');
+    expect(r.head).toEqual(['At a 40.0% pass rate: average fees for one section', '$671']);
+    expect(r.rows[1]).toEqual(['Chance of passing within 2 tries', '64.0%']);
   });
 });

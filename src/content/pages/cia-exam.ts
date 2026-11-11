@@ -39,15 +39,12 @@ ${h.table(['Fee', 'Member, 2026', 'Non-member, 2026', `Member, from ${h.date(b.f
 <h2>What retakes add to the exam cost</h2>
 <p>Each part retaken is paid again. The calculator values a retake at the average of the three part fees in the price list you chose, since you may not know in advance which part you will need to retake. We could not read part-by-part pass rates on The IIA’s pages, so the calculator does not assume any; type the number of retakes you want to plan for.</p>
 
-<h2>What the CIA covers</h2>
-<p>The CIA is the IIA’s designation for internal auditors. Its three parts move from the essentials of internal auditing to the practice of engagements and to business knowledge. The IIA publishes the syllabus of each part; this site does not summarize it because it changes with the program and the IIA’s outline is the reference.</p>
-${h.box('Dates in the totals', `<p>If your plans span ${h.date(b.from)}, run the calculator with both price lists, and check with The IIA which one applies to each payment.</p>`, 'tip')}
-
-<h2>Compared with the other credentials</h2>
-<p>A CIA candidate who is an IIA member and passes each part at the first try spends less in exam fees than on any other credential on this site. The first-try floors of the CPA exam, the CFP® exam and the ${h.a('enrolled-agent-exam', 'enrolled agent route')} are close behind. The ${h.a('frm-exam', 'FRM')}, the other risk-focused designation here, costs more per part. The ${h.a('home', 'comparator')} sets them side by side.</p>
 <h2>Member or non-member: the arithmetic</h2>
 <p>At 2026 prices, the gap between the member and non-member totals for the application and three parts is ${h.m((a.application[1] + a.p1[1] + a.p2[1] + a.p3[1]) - (a.application[0] + a.p1[0] + a.p2[0] + a.p3[0]))}. On the 2027 list it is ${h.m((b.application[1] + b.p1[1] + b.p2[1] + b.p3[1]) - (b.application[0] + b.p1[0] + b.p2[0] + b.p3[0]))}, because member prices rise more than non-member prices. Each retake widens the gap again, since every part costs less for a member. Membership dues are set by The IIA and by its local institutes and were not read for this site, so the calculator cannot tell you whether joining pays: subtract the dues you would pay over your exam period from the gap, and the sign of the result is the answer.</p>
 <p>The ${h.P.cia.eligibilityYears} years from acceptance are the other constraint. A candidate who needs several retakes should leave room for them inside that period, and price each one at the list in force at the time.</p>
+<p>The CIA is the IIA’s designation for internal auditors. Its three parts move from the essentials of internal auditing to the practice of engagements and to business knowledge. The IIA publishes the syllabus of each part; this site does not summarize it because it changes with the program and the IIA’s outline is the reference.</p>
+${h.box('Dates in the totals', `<p>If your plans span ${h.date(b.from)}, run the calculator with both price lists, and check with The IIA which one applies to each payment.</p>`, 'tip')}
+<p>A CIA candidate who is an IIA member and passes each part at the first try spends less in exam fees than on any other credential on this site, membership dues not counted. The first-try floors of the CPA exam, the CFP® exam and the ${h.a('enrolled-agent-exam', 'enrolled agent route')} are close behind. The ${h.a('frm-exam', 'FRM')}, the other risk-focused designation here, costs more per part. The ${h.a('home', 'comparator')} sets them side by side.</p>
 `;
   },
 });

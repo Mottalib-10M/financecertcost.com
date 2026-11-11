@@ -29,6 +29,8 @@ export interface PageDef {
   /** HTML line in bold right above the main tool, for what the reader must do first (final naive round: the CPA pass
    *  rates page sent readers to the AICPA three screens below the field where its rate is typed). */
   avantOutil?: (h: Helpers) => string;
+  /** HTML right under the main tool: a short static result in place of a calculator repeated from another page (rule 3 of 2026-11-10). */
+  apresOutil?: (h: Helpers) => string;
   /** Citable block, 120 words or more, one paragraph (RECETTE §21). */
   resume: (h: Helpers) => string;
   faqs: (h: Helpers) => FAQ[];

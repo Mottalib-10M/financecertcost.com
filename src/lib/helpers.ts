@@ -44,7 +44,7 @@ export function helpers(strict = false) {
     num1: (n: number) => formatNumber(n, 1),
     num2: (n: number) => formatNumber(n, 2),
     /** Average attempts in everyday words, with the exact figure: “about 2 to 3 tries (2.47 on average)”. */
-    tries: (n: number) => `${triesInWords(n)} (${formatNumber(n, 2)} on average)`,
+    tries: (n: number) => triesInWords(n),
     pc: pct,
     /** “November 7, 2026” from an ISO date. */
     date: (iso: string) => displayDate(iso, 'en-US'),

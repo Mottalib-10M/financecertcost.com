@@ -13,7 +13,7 @@ export default definePage({
   title: 'CPA Requirements by State: 120 or 150 Hours, With Dates',
   description: 'CPA requirements in California, Florida, New York, Texas and Pennsylvania: the 120-hour and 150-hour routes, the experience each needs and the date it opens.',
   h1: 'CPA requirements: the 120-hour and 150-hour routes, state by state',
-  intro: 'In the five states covered here, the classic route to a CPA license is 150 college semester hours and one year of experience. New York, Texas and Pennsylvania, and California from 2027, also accept 120 hours, usually a bachelor’s degree, with two years. Type your hours and experience to see which route you fit.',
+  intro: 'In the five states covered here, the classic route to a CPA (certified public accountant) license is 150 college semester hours and one year of experience. New York, Texas and Pennsylvania, and California from 2027, also accept 120 hours, usually a bachelor’s degree, with two years. Type your hours and experience to see which route you fit.',
   resume: (h) => {
     const S = h.P.cpa.states;
     return `For decades, almost every state required 150 semester hours of education for a CPA license, a fifth year of study beyond a bachelor’s degree. That is changing state by state, through a second route that accepts 120 hours, usually a bachelor’s degree, in exchange for a second year of experience. Of the five states this site follows, Texas opened its Pathway B on ${h.date(S.TX.next.from)}, New York opens its 120-hour pathway on ${h.date(S.NY.next.from)}, and California’s new rules take effect on ${h.date(S.CA.next.from)}, when the 150-unit requirement is removed. Pennsylvania already licenses candidates with fewer than 150 credits who complete ${h.num(S.PA.next.expHours)} hours of experience. Florida still requires 150 hours for the license; a 2026 bill that would have changed that died in the legislature on ${h.date(S.FL.billDied)}. The tool reads these dates against the date you plan to apply.`;
@@ -37,17 +37,14 @@ export default definePage({
 ${h.table(['State', 'To sit for the exam', 'For the license', 'Detail'], rows, `State boards and statutes, read on ${h.read}.`, ['l', 'l', 'l', 'l'])}
 <p>Each row summarizes the board’s own page or the statute, linked from the state’s page on this site. Hours are semester hours (credits); each state also sets how many must be in accounting and in business subjects, and what experience counts.</p>
 
-<h2>Why states are adding a 120-hour route</h2>
-<p>The 150-hour rule was meant to deepen the education of new CPAs. The case against it is the cost of a fifth year of study. The California Board of Accountancy’s ${h.src('ca_ab1175', 'March 2026 release')} describes the 150 total-unit requirement as one that “often necessitated a fifth year of school, viewed by many as a barrier to entry.” The trade-off adopted in most states is the same: drop the extra 30 hours and require a second year of experience.</p>
-
 <h2>Dates matter: when you apply decides the rule</h2>
 <p>A route is open from the date the law or the board sets, and some old routes close. New York’s 150-hour pathway under its current content rules runs until August 1, 2027; after that date, the 150-hour route follows the content of the “150E” pathway, according to ${h.src('ny_150', 'NYSED')}. California’s current rules end on December 31, 2026. That is why the tool asks when you will apply for the license, not only what you have done.</p>
 ${h.box('Exam credit is not a license', '<p>Passing the four sections does not make you a CPA. The license comes from the state board once education, exam and experience are all met, and each board sets how long passed sections remain valid while you complete the rest.</p>', 'warning')}
 
-<h2>Moving between states</h2>
-<p>A CPA licensed in one state who wants to practice in another deals with mobility and reciprocity rules, which vary and are not covered here. This page and its tool are for a first license.</p>
 <h2>From the route to the budget</h2>
 <p>The route you take changes the calendar more than the fees. Exam fees are the same on both routes, and the board fees shown on each state page do not depend on the number of credit hours. What differs is the cost of the extra education on the 150-hour route, which this site does not price, and the extra year of work before the license on the 120-hour route. A candidate weighing the two can price the coursework with their school and compare it with what a year’s delay in licensure means for them. The ${h.a('cpa-exam-cost', 'exam cost calculator')} then adds the part both routes share.</p>
+<p>A CPA licensed in one state who wants to practice in another deals with mobility and reciprocity rules, which vary and are not covered here. This page and its tool are for a first license.</p>
+<p>The 150-hour rule was meant to deepen the education of new CPAs. The case against it is the cost of a fifth year of study. The California Board of Accountancy’s ${h.src('ca_ab1175', 'March 2026 release')} describes the 150 total-unit requirement as one that “often necessitated a fifth year of school, viewed by many as a barrier to entry.” The trade-off adopted in most states is the same: drop the extra 30 hours and require a second year of experience.</p>
 `;
   },
 });

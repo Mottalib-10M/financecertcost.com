@@ -39,6 +39,7 @@ export default function MiniSim({ kind, lang = 'en', href, defaults = {}, primar
           <MentionExemple lang={lang} touched={touched} texte={out.exemple} />
           <p className="text-sm font-medium text-navy-700">{out.head[0]}</p>
           <p className="tabular-nums mt-1 text-4xl font-bold text-navy-900">{out.head[1]}</p>
+          {out.hyp && <p data-hyp className="mt-1 text-xs text-navy-700">{out.hyp}</p>}
           {out.alert && <p data-alerte className="mt-2 text-sm font-semibold text-navy-900">{out.alert}</p>}
           <table className="ledger mt-3 w-full text-sm"><tbody>
             {out.rows.map(([l, x]) => isText(x)

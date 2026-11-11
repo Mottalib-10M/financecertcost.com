@@ -43,15 +43,11 @@ ${h.table(['Plan', 'Early registration', 'Standard registration'], ret, 'Enrollm
 <h2>FRM® or CFA® Program?</h2>
 <p>The two are often weighed against each other by people in risk and investment roles. In fees, the FRM® is lighter: two exams instead of three, and ${h.m(F.enrollment + 2 * F.early)} at the first try with early registration against ${h.m(h.P.cfa.programTotal.low)} for the three CFA® levels. The ${h.a('cfa-exam-cost', 'CFA® exam cost')} calculator adds the CFA® retakes, which the published pass rates make likely.</p>
 ${h.box('Not in the total', '<p>GARP membership, the cost of the experience requirement and any travel to a test center are not included. Only fees read on GARP’s fees page are.</p>', 'info')}
-
-<h2>Prep</h2>
 <p>Type what you will spend on books, a course or practice exams, once. This site sells none and does not list prices. If you budget a retake, decide whether your materials would carry over and adjust the amount you type.</p>
 <p>The ${h.a('cia-exam', 'CIA')} is the other professional designation on this site with a clear price list, and the ${h.a('home', 'comparator')} sets all six side by side.</p>
-<h2>Early registration, window by window</h2>
 <p>The early deadlines come months before each window: ${F.sessions[0].early} for May 2027, ${F.sessions[1].early} for August and ${F.sessions[2].early} for November. Standard registration then runs to ${F.sessions[0].standard}, ${F.sessions[1].standard} and ${F.sessions[2].standard}. A candidate who decides late pays ${h.m(F.standard - F.early)} more per part. Over a plan of two parts and one retake, the difference between always registering early and always registering late is ${h.m(3 * (F.standard - F.early))}, on top of an exam bill that is otherwise fixed.</p>
-<h2>One window or two</h2>
 <p>In May and November 2027 the two parts fall on different days of the same window; in August they share the same days, morning and afternoon. Sitting both in one window saves time but not money: each part is paid at its own registration fee. Whether both parts are graded when they are taken together is a matter for GARP’s own rules, which this site has not read; check them before paying for both in one window.</p>
-<p>Whatever plan you choose, the enrollment fee is paid once, so it weighs less the more parts you sit.</p>
+<p>Whatever plan you choose, the enrollment fee is paid once, so it weighs less the more parts you sit, while every retake is paid again at the price of the window you choose.</p>
 `;
   },
 });

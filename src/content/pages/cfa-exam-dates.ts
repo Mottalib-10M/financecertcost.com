@@ -16,7 +16,7 @@ export default definePage({
   title: 'CFA® Exam Dates: Windows by Level and the Fastest Path',
   description: 'CFA® exam dates by level: the months Levels I, II and III are offered, the fastest calendar from your first window to Level III, and the earliest retake.',
   h1: 'CFA® exam dates: which month for which level',
-  intro: `Level I is offered in ${months(P.cfa.offered.l1)}, Level II in ${months(P.cfa.offered.l2)}, Level III in ${months(P.cfa.offered.l3)}. Pick your Level I window and the gap you need between exams to see the earliest date for each level.`,
+  intro: `The CFA® (Chartered Financial Analyst®) Program has three exams. Level I is offered in ${months(P.cfa.offered.l1)}, Level II in ${months(P.cfa.offered.l2)}, Level III in ${months(P.cfa.offered.l3)}. Pick your Level I window and the gap you need between exams to see the earliest date for each level.`,
   resume: (h) => {
     const o = h.P.cfa.offered; const list = (a: number[]) => a.map(h.mn).join(', ');
     return `CFA® Program exams are held in testing windows rather than on a single day. In the sessions recorded by CFA Institute from 2024 to 2026, Level I was offered in ${list(o.l1)}; Level II in ${list(o.l2)}; and Level III only in ${list(o.l3)}. Because Level III has just two windows, it sets the pace of the whole program: a candidate who passes Level I in February and Level II in May can reach Level III in August of the same year, while a May or August start pushes Level III into the year after. Retakes slow things down. A failed level cannot be retaken in the next window: CFA Institute requires more than six months between attempts at the same level, and allows at most ${h.P.cfa.maxPerYear} attempts at it in a calendar year. The exact days inside each window are set by CFA Institute for each year and are not listed here.`;
@@ -43,10 +43,7 @@ ${h.table(['Level I', 'Level II', 'Level III', 'Level I retake if failed'], path
 <h2>Timing and money</h2>
 <p>Exam dates also fix what you pay. Every window has an early and a standard registration deadline; registering early saves ${h.m(h.P.cfa.fees.l1.standard - h.P.cfa.fees.l1.early)} per exam on the prices of the ${h.src('cfa_pricing', 'December 2024 announcement')}. A candidate who aims at the fastest path has less time to register early for the next level, since results arrive ${h.P.cfa.resultsWeeks.min} to ${h.P.cfa.resultsWeeks.max} weeks after the window. Moving a booked exam to another window, where it is allowed, costs ${h.m(h.P.cfa.reschedule)}.</p>
 ${h.box('Retakes in the same year', `<p>The ${h.src('cfa_policies', 'policies')} say a level can be retaken at most ${h.P.cfa.maxPerYear} times in a calendar year, never in consecutive windows and never in windows six months or less apart, and at most ${h.P.cfa.maxAttemptsPerLevel} times in all. For Level I, offered four times a year, the six-month rule is the one that bites: it rules out the next window and usually the one after.</p>`, 'warning')}
-
-<h2>Where to go next</h2>
 <p>For the fee of each window, see the ${h.a('cfa-exam-cost', 'CFA® exam cost')} page; for the rates that decide how many windows you are likely to need, the ${h.a('cfa-pass-rates', 'pass rates by session')}.</p>
-<h2>A calendar for the money</h2>
 <p>Put the windows and the fees together and the program becomes a payment schedule. On the fastest path from a February start, three registrations fall within about six months, ${h.m(h.P.cfa.fees.l1.early + h.P.cfa.fees.l2.early + h.P.cfa.fees.l3.early)} at early prices. On a slower path, with one Level I retake and a year between levels, the same fees spread over three years or more, with one more Level I fee. Neither path changes the price of a sitting; both change when you need the cash. If you pay from your salary, the slower path spreads the cash; if an employer reimburses fees only on passing, the date of each payment matters as much as its size.</p>
 `;
   },

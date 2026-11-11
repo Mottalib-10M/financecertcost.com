@@ -6,9 +6,12 @@
  * visible), nor one that does not open on a paragraph, nor one whose remainder is short.
  */
 const MIN_REST = 280;
+const FOLD_OFF = true;
 const text = (html: string) => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 
 export function replierSections(html: string): string {
+  // 2026-11-10 (rule 3): pages are cut to three short sections and nothing essential is folded any more.
+  if (FOLD_OFF) return html;
   const parts = html.split(/(?=<h2[\s>])/);
   return parts.map((sec) => {
     const m = sec.match(/^(<h2[^>]*>([\s\S]*?)<\/h2>)(\s*)(<p[\s>][\s\S]*?<\/p>)([\s\S]*)$/);
